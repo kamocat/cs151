@@ -49,18 +49,6 @@ void count_down( int start, int end ) {
 }
 	
 /*
- * This function swaps two integers.
- * It takes pointers to integers (so it can access the values from whatever
- * scope is calling the swap function)
- */
-void swap( int *first, int *second ) {
-	int tmp = *first;
-	*first = *second;
-	*second = tmp;
-	return;
-}
-
-/*
  * Get two integers from ther user.
  * They will be saved to the addresses referenced by the pointers passed
  * into the function.
@@ -74,12 +62,44 @@ void get_inputs( int *input_1, int *input_2 ) {
 }
 
 /*
- * This function orders two integers so that the greater one is first.
- * It will manipulate the values referenced by the pointers passed in.
+ * This function counts between the first and second input.
+ * If the first input is greater, it counts down.
+ * If the first input is less, it counts up.
  */
-void greatest_first ( int *first, int *second ) {
-	if( *second > *first ) {
-		swap( first, second );
+void count_between( int input1, int input2 ) {
+	if( input1 > input2 ) {
+		count_down( input1, input2 );
+	} else {
+		count_up( input1, input2 );
 	}
 }
 
+
+/*
+ * This function asks the user if the program should quit, ore rerun.
+ * If q or n is entered, the program will quit.
+ * Otherwise, it will run again.
+ */
+char quit_or_rerun( ) {
+	printf("Rerun the program? \n");
+	char c;
+	scanf("%c", &c );
+	flushall();	// flush the scan buffer
+	return !( ( c == 'q' ) || ( c == 'n' ) ||
+			( c == 'Q' ) || ( c == 'N' ) );
+}
+
+
+
+int main( int argc, char **argv ) {
+	int input1;
+	int input2;
+	do{
+		get_inputs( &input1, &input2 );
+		count_up( 0, input1 );
+		count_down( input1, 0 );
+		count_between( input1, input2 );
+	} while( quit_or_rerun() );
+
+	return 0;
+}
