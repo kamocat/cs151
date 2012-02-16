@@ -1,0 +1,259 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title> CS151 - Introduction to Programming I with Embedded Control Lab </title>
+<link rel="stylesheet" type="text/css" href="index_files/classes.css">
+</head>
+<body style=""><div id="Header"> CS151-Introduction to Programming I  
+&nbsp; &nbsp; &nbsp;	D. Kevin McGrath &nbsp; &nbsp; &nbsp; MWF 11:00 - 
+11:50, COVL 216 &nbsp; &nbsp; &nbsp; Winter 2012 </div>
+<center><h2></h2></center>
+<div id="Menu">
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?home=1">Home/Announcements</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?style=1">Style Guide</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?mistakes=1">Common Mistake List</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?examples=1">Materials from Class</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?assignments=1">Assignments</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?assignments=1">Labs</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?schedule=1">Schedule</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?resources=1">Other Resources</a> <br>
+<a href="https://secure.engr.oregonstate.edu:8000/teach.php?type=assignment">Submission</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?file=syllabus">Syllabus</a> <br>
+</div>
+<div id="Content">
+<h1>Lab 5</h1>
+<h2>Lab Overview and Objectives:</h2>
+<p>In programming, often times it is useful to do different things depending on the
+circumstances or repeat the same set of steps over and over. Using if statements and for
+loops allows this to be done in a short and simple way.</p>
+
+<h2>Prelab:</h2>
+<ol>
+<li> Write a couple lines of code to show how you would call these functions. Be sure you save any return values:
+
+<ol>
+<li><div class="highlight"><pre><span class="kt">void</span> <span class="n">print_longest</span><span class="p">(</span><span class="kt">char</span> <span class="n">one</span><span class="p">[],</span> <span class="kt">char</span> <span class="n">two</span><span class="p">[],</span> <span class="kt">char</span> <span class="n">three</span><span class="p">[]);</span>
+</pre></div></li>
+<li><div class="highlight"><pre><span class="kt">int</span> <span class="n">calc_average</span><span class="p">(</span><span class="kt">int</span> <span class="n">num1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num2</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num3</span><span class="p">);</span>
+</pre></div></li>
+</ol>
+</li>
+<li> Write a while loop that prints: 1 2 3 4 5 6</li>
+</ol>
+
+<hr>
+<h2>Task 1:</h2>
+<p>Remember, when writing functions, we must put them above main. 
+Alternatively, we can prototype them above main, and define them below. 
+The former is the perferred methodology. For example:</p>
+
+<div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt; </span>
+
+<span class="cm">/* define a function before it is called  */</span>
+<span class="kt">int</span> <span class="n">please_add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">){</span>
+	<span class="cm">/* a and b are the function parameters  */</span>
+	<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+	<span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">y</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">z</span><span class="p">;</span>
+
+	<span class="n">scanf</span><span class="p">(</span><span class="s">"%d %d"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">);</span>
+
+	<span class="cm">/* call the function */</span>
+	<span class="n">z</span> <span class="o">=</span> <span class="n">please_add</span><span class="p">(</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">);</span>
+
+	<span class="n">printf</span><span class="p">(</span><span class="s">"The sum is %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<!-- <div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt; </span> -->
+
+<!-- <span class="cm">/* define a function before it is called  */</span> -->
+<!-- <span class="kt">int</span> <span class="nf">please_add</span><span class="p">(</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span> <span class="p">)</span> <span class="p">{</span> -->
+<!-- 	<span class="cm">/* a and b are the function parameters  */</span> -->
+<!-- 	<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> -->
+<!-- 	<span class="k">return</span> <span class="n">c</span><span class="p">;</span> -->
+<!-- <span class="p">}</span> -->
+
+<!-- <span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">){</span> -->
+<!-- 	<span class="kt">int</span> <span class="n">x</span><span class="p">;</span> -->
+<!-- 	<span class="kt">int</span> <span class="n">y</span><span class="p">;</span> -->
+<!-- 	<span class="kt">int</span> <span class="n">z</span><span class="p">;</span> -->
+
+<!-- 	<span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">);</span> -->
+
+<!-- 	<span class="cm">/* call the function */</span> -->
+<!-- 	<span class="n">z</span> <span class="o">=</span> <span class="n">please_add</span><span class="p">(</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">);</span> -->
+
+<!-- 	<span class="n">printf</span><span class="p">(</span><span class="s">&quot;The sum is %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span> -->
+
+<!-- 	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span> -->
+<!-- <span class="p">}</span> -->
+<!-- </pre></div> -->
+
+<p>For this task, you will be writing and using three functions. The first counts from 0
+to the parameter and prints the numbers out in a single line. The second function counts
+down to 0 from the parameter. The last function should count between the two parameters.
+If the first number is smaller than the second number, the function should count up. If
+the first number is larger, the function should count down.</p>
+
+<p>Once all three functions are written, write a main function that prompts the user for
+two positive numbers, then uses the first for the count up and count down functions and
+both numbers for the count between function. After doing this once, the program should
+ask the user if they would like to quit or re-run the program.</p>
+
+<hr>
+<h2>Task 2:</h2>
+<p>Put your code for this task in a file called <tt>flush.c</tt></p>
+
+<p>You may have noticed that even when you only want to read one character from the
+keyboard, nothing happens until you press the "Enter" key. The computer will not allow
+you to immediately read the character after it was typed. This is because input into the
+computer program is "buffered": the computer remembers all the characters typed until it
+encounters the newline character ('\n'). At that point in time, all characters that were
+typed are made available to your program -- this includes the newline. You may then go
+through each of those characters one at a time by calling <tt>getchar()</tt> over and
+over. In case you haven’t used getchar before, it is called like this: </p><div class="highlight"><pre><span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">getchar</span><span class="p">();</span></pre></div><p></p>
+
+<p>Often, a program will only be interested in the first character that was typed, so all
+the remaining characters on the line are extra and should be ignored. A common task is to
+call <tt>getchar()</tt> to read in the first character from the buffer, store that
+character, and then keep calling getchar over and over until the program encounters the
+newline character. None of these "extra" characters are remembered. This is called
+"flushing" the buffer.</p>
+
+<p>Write a function called <tt>getchar_and_flush</tt> that gets the first character AND
+flushes any remaining characters out of the input buffer before returning that character.
+We do not know how many characters will appear before the newline character.</p>
+
+<p>In main, create a loop that does the following:</p>
+
+<ol>
+<li>Prompts the user for input.</li>
+<li>Print out the first character the user typed, as well as it's ASCII code.</li>
+<li>Repeat until the user enters a "special" character. What counts as special is
+entirely up to you.</li>
+</ol>
+
+<hr>
+
+<h2>Study Questions (written answers due at the beginning of Lab5):</h2>
+<ol>
+<li>Do you completely understand what the return statement does? It changes the flow of
+execution. It causes the program to “return” to the point where the function was called.
+It also can bring a value with it.
+
+<div class="highlight"><pre><span class="cm">/* This is bad code, as it has multiple returns. */</span>
+<span class="kt">int</span> <span class="n">what_do_i_return</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">){</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">%</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+			<span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<!-- <div class="highlight"><pre><span class="cm">/* This is bad code, as it has multiple returns. */</span> -->
+<!-- <span class="kt">int</span> <span class="nf">what_do_i_return</span><span class="p">(</span> <span class="kt">int</span> <span class="n">x</span> <span class="p">)</span> <span class="p">{</span> -->
+<!--         <span class="kt">int</span> <span class="n">i</span><span class="p">;</span> -->
+
+<!--         <span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> -->
+<!--                 <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span> -->
+<!--         <span class="p">}</span> -->
+
+<!--         <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> -->
+<!--                 <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">%</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> -->
+<!--                         <span class="k">return</span> <span class="n">i</span><span class="p">;</span> -->
+<!--                 <span class="p">}</span> -->
+<!--         <span class="p">}</span> -->
+
+<!--         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> -->
+<!-- <span class="p">}</span> -->
+<!-- </pre></div> -->
+Describe and give examples of what this function can return. Your explanation should explain when each return statement is used.
+</li>
+<li>Write a couple lines of code that calls the above function and prints out what it returns.</li>
+<li>Rewrite the above code, so that it only has a single return, at the end of the
+function. The code must have the exact same behavior.</li>
+</ol>
+
+<hr>
+<h2>Extended Learning:</h2>
+
+<p>Write a program that walks an ‘*’ to the right and back to the left exactly like this
+<a href="http://classes.engr.oregonstate.edu/eecs/spring2011/cs151/Labs/Lab5ExtLearning.html">demonstration</a>.
+The first thing your program should do is ask the user how far to walk. You will write
+functions and not put the movement code in main.</p>
+
+<p>Your main function must look like this:</p>
+
+<div class="highlight"><pre><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+
+	<span class="n">printf</span><span class="p">(</span><span class="s">"Enter how far to walk. "</span><span class="p">);</span>
+	<span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
+
+	<span class="cm">/* add some checking to see if x is &lt;=1 or &gt;10 */</span>
+
+
+	<span class="cm">/* * forms a triangle */</span>
+	<span class="n">go_there_and_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+
+	<span class="cm">/* * stays on the same line */</span>
+	<span class="n">go_straight_there_and_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<!-- <div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span> -->
+<!--         <span class="kt">int</span> <span class="n">x</span><span class="p">;</span> -->
+
+<!--         <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Enter how far to walk. &quot;</span><span class="p">);</span> -->
+<!--         <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span> -->
+
+<!--          <span class="cm">/* add some checking to see if x is &lt;=1 or &gt;10 */</span> -->
+
+
+<!--         <span class="cm">/* * forms a triangle */</span> -->
+<!--         <span class="n">go_there_and_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> -->
+
+<!--         <span class="cm">/* * stays on the same line */</span> -->
+<!--         <span class="n">go_straight_there_and_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> -->
+
+<!--         <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> -->
+<!-- <span class="p">}</span> -->
+<!-- </pre></div> -->
+
+<p><b>Hints:</b></p><p>
+</p><ul>
+<li>Pause 1 second: <div class="highlight"><pre><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span></pre></div>
+</li>
+<li>Move backward 1 space: <div class="highlight"><pre><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'\b'</span><span class="p">);</span></pre></div></li>
+<li>Flush the output buffer and print my printf statement now:<div class="highlight"><pre><span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span></pre></div>
+ </li>
+</ul>
+<hr>
+&nbsp;&nbsp;&nbsp;<a href="mailto:dmcgrath@eecs.oregonstate.edu"><i>D. Kevin McGrath</i></a>
+<br>&nbsp;&nbsp;&nbsp;<i>Last modified:  Mon Feb 13 07:40:14 2012</i>
+</div>
+
+<div data="ih" style="display: none" id="tc_container"></div></body></html>
