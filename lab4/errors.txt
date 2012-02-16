@@ -1,0 +1,26 @@
+ERRORS INTRODUCED:
+
+removed a semicolon from line 44:
+lab4_4.c: In function ‘get_input’:
+lab4_4.c:45: error: expected ‘;’ before ‘}’ token
+
+
+removed the declaration of int input:
+lab4_4.c: In function ‘get_input’:
+lab4_4.c:42: error: ‘input’ undeclared (first use in this function)
+lab4_4.c:42: error: (Each undeclared identifier is reported only once
+lab4_4.c:42: error: for each function it appears in.)
+lab4_4.c:51: warning: control reaches end of non-void function
+
+
+removed the braces from a multi-line if statement
+lab4_4.c: In function ‘get_input’:
+lab4_4.c:48: error: expected expression before ‘else’
+
+
+removed the parenthesis from around a function call:
+passed an incorrect type to a function call:
+lab4_4.c: In function ‘main’:
+lab4_4.c:80: warning: passing argument 2 of ‘count_down’ makes integer from pointer without a cast
+lab4_4.c: In function ‘main’:
+lab4_4.c:80: warning: passing argument 2 of ‘count_down’ makes integer from pointer without a cast
