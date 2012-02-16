@@ -1,0 +1,253 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title> CS151 - Introduction to Programming I with Embedded Control Lab </title>
+<link rel="stylesheet" type="text/css" href="lab4_files/classes.css">
+</head>
+<body style=""><div id="Header"> CS151-Introduction to Programming I  
+&nbsp; &nbsp; &nbsp;	D. Kevin McGrath &nbsp; &nbsp; &nbsp; MWF 11:00 - 
+11:50, COVL 216 &nbsp; &nbsp; &nbsp; Winter 2012 </div>
+<center><h2></h2></center>
+<div id="Menu">
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?home=1">Home/Announcements</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?style=1">Style Guide</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?mistakes=1">Common Mistake List</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?examples=1">Materials from Class</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?assignments=1">Assignments</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?assignments=1">Labs</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?schedule=1">Schedule</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?resources=1">Other Resources</a> <br>
+<a href="https://secure.engr.oregonstate.edu:8000/teach.php?type=assignment">Submission</a> <br>
+<a href="http://web.engr.oregonstate.edu/cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?file=syllabus">Syllabus</a> <br>
+</div>
+<div id="Content">
+<h1>Lab 4</h1>
+<h2>Lab Overview and Objectives:</h2>
+<p>In programming, often times it is useful to do different things 
+depending on the circumstances or repeat the same set of steps over and 
+over. Using if statements and for loops allows this to be done in a 
+short and simple way.</p>
+
+<h2>Prelab:</h2>
+<ol>
+<li> What is the difference between = and == in the C language? Explain 
+AND give an example of each. What is the difference between &amp; and 
+&amp;&amp; in the C language? Explain AND give an example of each. What 
+is the difference between | and || in the C language? Explain AND give 
+an example of each.</li>
+<li>  Explain in words what the following C code does: 
+
+<pre><tt><b><font color="#0000FF">if</font></b> <font color="#990000">(</font>q <font color="#990000">==</font> <font color="#993399">9</font><font color="#990000">)</font> <font color="#FF0000">{</font>
+    q <font color="#990000">=</font> q <font color="#990000">-</font> <font color="#993399">1</font><font color="#990000">;</font>
+<font color="#FF0000">}</font> <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font>
+    q <font color="#990000">=</font> q <font color="#990000">+</font> <font color="#993399">1</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+</li></ol>
+
+<h2>Programming Tip:</h2>
+<p>As a reminder from the previous lab, an experienced programmer never 
+sits down and writes an entire program then checks to see that it works.
+ Instead, an experienced programmer will work on a small part of the 
+program, get it working, and then add to it. This is the software 
+engineering practice of incrementality. This way the program grows a 
+piece at a time and errors are easier to find because they can be 
+narrowed down to the most recent part of the program that was created.</p>
+
+<hr>
+<h2>Task 1:</h2>
+Put this code in a file named lab4_1.c and complete the task. Demonstrate to your TA.
+
+<pre><tt><b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;stdio.h&gt;</font>
+
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font> <font color="#990000">**</font>argv<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <font color="#009900">double</font> f1 <font color="#990000">=</font> <font color="#990000">-</font><font color="#993399">1.0</font><font color="#990000">;</font>
+    <font color="#009900">double</font> f2 <font color="#990000">=</font> <font color="#990000">-</font><font color="#993399">1.0</font><font color="#990000">;</font>
+    <font color="#009900">double</font> f3 <font color="#990000">=</font> <font color="#990000">-</font><font color="#993399">1.0</font><font color="#990000">;</font>
+    <font color="#009900">double</font> f4 <font color="#990000">=</font> <font color="#990000">-</font><font color="#993399">1.0</font><font color="#990000">;</font>
+    <font color="#009900">double</font> f5 <font color="#990000">=</font> <font color="#990000">-</font><font color="#993399">1.0</font><font color="#990000">;</font>
+
+    <b><font color="#000000">printf</font></b><font color="#990000">(</font><font color="#FF0000">"I am going to ask you to enter 5 different positive floating point numbers.</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font><font color="#990000">);</font>
+    <b><font color="#000000">printf</font></b><font color="#990000">(</font><font color="#FF0000">"I will end the program as soon as you enter a negative value or a repeat number.</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font><font color="#990000">);</font>
+    <b><font color="#000000">printf</font></b><font color="#990000">(</font><font color="#FF0000">"I will congratulate you and print out the 5 numbers if you successfully complete the task.</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font><font color="#990000">);</font>
+
+    <b><font color="#000000">printf</font></b><font color="#990000">(</font><font color="#FF0000">"Please enter your first number. "</font><font color="#990000">);</font>
+    <b><font color="#000000">scanf</font></b><font color="#990000">(</font><font color="#FF0000">"%lf"</font><font color="#990000">,</font> <font color="#990000">&amp;</font>f1<font color="#990000">);</font>
+
+
+    <i><font color="#9A1900">/* your code from now on */</font></i>
+    <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+
+<hr>
+<h2>Task 2:</h2>
+<p>Put this code in a file named lab4_2.c and complete the task. Demonstrate to your TA.</p><p>
+ Prompt the user to enter a number between 1 and 20. If their number is 
+not in this range print an error message and exit the program with 
+either <tt>return -1;</tt> or <tt>exit (-1)</tt>;</p>
+
+<p>If their number is in the correct range, use a for loop to print out 
+from 1 up to and including their number. All the numbers should be on 
+one line with a space between. Then print a newline.</p>
+
+<p>Then using another for loop print the numbers from their number down to 1 all on one line with a space between.</p>
+
+<hr>
+<h2>Task 3:</h2>
+<p>Save your work for this exercise in a source file called division.c. Create a program which meets the following requirements:</p>
+<ol>
+  <li> Prompt the user to enter 2 integers. These numbers should be saved in int
+	variables. Let's call these numbers a and b.</li>
+  <li> If b is larger than a, swap them.</li>
+  <li> Print out the result of the division of a by b.</li>
+  <li> Print out the result of the a mod b.</li>
+  <li> Create 2 double variables <tt>a_double</tt> and <tt>b_double</tt> and
+	assign <tt>a_double = a;</tt> and <tt>b_double = b;</tt></li>
+  <li> Print out the result of dividing <tt>a_double</tt> by <tt>b_double</tt>. Match the
+	output below (my prompt likely looks different than yours).
+<pre><tt><font color="#0000FF">[dmcgrath@wasilla]</font> <font color="#FF0000">12w/labs</font>&gt; ./division
+
+Enter an integer: 7
+Enter a second integer: 37
+37 / 7 = 5
+37 % 7 = 2
+37.000000 / 7.000000 = 5.285174
+
+<font color="#0000FF">[dmcgrath@wasilla]</font> <font color="#FF0000">12w/labs</font>&gt;</tt></pre>
+
+</li>
+</ol>
+
+<hr>
+<h2>Task4:</h2>
+<p>In this task, you will be taking working code, specifically your code from Task 2, and
+introducing errors. You will then attempt to compile the code, and make note of the
+errors it generates. This should help narrow down problems in the future. If your code
+does not have the necessary lines in order to introduce an error, please add them.</p>
+
+<p>Introduce the following errors, removing each before introducing the next:</p>
+
+<ol>
+  <li>Remove a semicolon from a line. Make note of which line.</li>
+  <li>Comment out the declaration of a variable that you use in multiple places.</li>
+  <li>Remove the braces around an if statement which contains multiple lines, and has an
+	else portion.</li>
+  <li>Remove the parentheses on a function call.</li>
+  <li>Pass an incorrect type to a function call.</li>
+</ol>
+
+
+<h2>Study Questions (written answers due at the beginning of Lab5):</h2>
+<ol>
+<li> Fix this code. There are &gt;10 errors.
+<pre><tt><i><font color="#9A1900">/**</font></i>                                          
+<i><font color="#9A1900">* Original Author: Bob Smith</font></i>                          
+<i><font color="#9A1900">* File: myar.c</font></i>                                        
+<i><font color="#9A1900">* Created: 2012 January 26, 4:00 by smithb</font></i>            
+<i><font color="#9A1900">* Last Modified: 2011 January 26, 4:30 by smithb</font></i>      
+<i><font color="#9A1900">* </font></i>                                                    
+<i><font color="#9A1900">* Description: This file contains a program that</font></i>      
+<i><font color="#9A1900">*   tells the user whether the number they entered</font></i>    
+<i><font color="#9A1900">*   was a prime number  </font></i>                              
+<i><font color="#9A1900">* Errors including style violations: at least 10</font></i>      
+<i><font color="#9A1900">**/</font></i>                                                   
+
+<b><font color="#000080">#include</font></b> <font color="#FF0000">&lt;stdio.h&gt;</font>
+
+<b><font color="#000080">#define</font></b> PROMPT <font color="#FF0000">"Please enter a whole number:"</font>
+<b><font color="#000080">#define</font></b> NOT_PRIME <font color="#FF0000">"The number %s is not a prime number.</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font>
+<b><font color="#000080">#define</font></b> PRIME <font color="#FF0000">"The number %d is a prime number.</font><font color="#CC33CC">\n</font><font color="#FF0000">"</font>        
+<b><font color="#000080">#define</font></b> DONE <font color="#993399">0</font>          <i><font color="#9A1900">/* ends successful program */</font></i>                           
+<b><font color="#000080">#define</font></b> FIRST_FACTOR <font color="#993399">2</font>  <i><font color="#9A1900">/* initial value in for loop */</font></i>                         
+
+
+<i><font color="#9A1900">/**</font></i>
+<i><font color="#9A1900">* </font></i><font color="#009900">@function</font><i><font color="#9A1900"> main</font></i>
+<i><font color="#9A1900">* </font></i><font color="#009900">@description</font><i><font color="#9A1900"> this function promts the user to </font></i>
+<i><font color="#9A1900">*   enter an int and then checks if it is prime </font></i>
+<i><font color="#9A1900">*   and informs the user</font></i>
+<i><font color="#9A1900">* </font></i><font color="#009900">@params</font><i><font color="#9A1900"> none</font></i>
+<i><font color="#9A1900">* </font></i><font color="#009900">@return</font><i><font color="#9A1900"> int</font></i>
+<i><font color="#9A1900">**/</font></i>
+<font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">()</font><font color="#FF0000">{</font>
+    <font color="#009900">int</font> i<font color="#990000">;</font>       <i><font color="#9A1900">/* loop counter */</font></i>
+    <font color="#009900">char</font> number<font color="#990000">;</font> <i><font color="#9A1900">/* number provided by user */</font></i>
+    <b><font color="#000000">printf</font></b><font color="#990000">(</font> <font color="#FF0000">"%d"</font><font color="#990000">,</font> PROMPT <font color="#990000">);</font>  <i><font color="#9A1900">/* promt user */</font></i>
+    <b><font color="#000000">scanf</font></b><font color="#990000">(</font> <font color="#FF0000">"%d"</font><font color="#990000">,</font> number <font color="#990000">);</font>  <i><font color="#9A1900">/* wait user for input */</font></i>
+    <i><font color="#9A1900">/* Prime numbers are defined as any number </font></i>
+<i><font color="#9A1900">        greater than one that is only divisible</font></i>
+<i><font color="#9A1900">        by one and itself. Dividing the number</font></i>
+<i><font color="#9A1900">        by two shortens the time it takes to</font></i>
+<i><font color="#9A1900">        complete. */</font></i>
+    <b><font color="#0000FF">for</font></b><font color="#990000">(</font>i <font color="#990000">=</font> <font color="#993399">2</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> number<font color="#990000">/</font><font color="#993399">2</font><font color="#990000">;</font> <font color="#990000">++</font>i<font color="#990000">)</font><font color="#FF0000">{</font>
+        <b><font color="#0000FF">if</font></b><font color="#990000">(</font> number<font color="#990000">%</font>i <font color="#990000">==</font> <font color="#993399">0</font> <font color="#990000">)</font><font color="#FF0000">{</font>    <i><font color="#9A1900">/* if divisible */</font></i>
+        <b><font color="#000000">printf</font></b><font color="#990000">(</font> NOT_PRIME<font color="#990000">,</font> number <font color="#990000">);</font> <i><font color="#9A1900">/* not prime */</font></i>
+        <b><font color="#0000FF">return</font></b> DONE<font color="#990000">;</font>        <i><font color="#9A1900">/* exit program */</font></i>
+        <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+    <i><font color="#9A1900">/* if number is not divisible by anything</font></i>
+<i><font color="#9A1900">        than it must be prime */</font></i>
+    <b><font color="#000000">printf</font></b><font color="#990000">(</font> PRIME<font color="#990000">,</font> number<font color="#990000">);</font>
+    <b><font color="#0000FF">return</font></b><font color="#990000">;</font>     <i><font color="#9A1900">/* exit program */</font></i>
+</tt></pre>
+</li>
+
+<li> This code is hard to read because it isn't indented properly. Fix the indentation.
+
+<pre><tt><font color="#009900">int</font> <b><font color="#000000">main</font></b><font color="#990000">(</font><font color="#009900">int</font> argc<font color="#990000">,</font> <font color="#009900">char</font> <font color="#990000">**</font>argv<font color="#990000">)</font> <font color="#FF0000">{</font>
+<font color="#009900">int</font> a<font color="#990000">=</font><font color="#993399">10</font><font color="#990000">,</font> b<font color="#990000">=</font><font color="#993399">5</font><font color="#990000">,</font> c<font color="#990000">,</font> d<font color="#990000">,</font> i<font color="#990000">;</font>
+<b><font color="#0000FF">if</font></b><font color="#990000">(</font>a <font color="#990000">&lt;</font> b<font color="#990000">)</font> <font color="#FF0000">{</font> c <font color="#990000">=</font> a<font color="#990000">;</font>
+d <font color="#990000">=</font> b<font color="#990000">;</font>
+<b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font>
+c <font color="#990000">=</font> b<font color="#990000">;</font>
+d <font color="#990000">=</font> a<font color="#990000">;</font>
+<font color="#FF0000">}</font>
+<b><font color="#0000FF">for</font></b><font color="#990000">(</font>i<font color="#990000">=</font>c<font color="#990000">;</font> i<font color="#990000">&lt;</font>d<font color="#990000">;</font> i<font color="#990000">++)</font> <font color="#FF0000">{</font>
+<b><font color="#000000">printf</font></b><font color="#990000">(.%</font>i <font color="#990000">.,</font> i<font color="#990000">);</font>
+<font color="#FF0000">}</font>
+<b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+</li>
+
+<li>Write a for loop that prints out the odd integers between 1 and 100. Do it without using an if statement. </li>
+
+<li> Write a for loop that prints out the integers between 1 and 20. 
+This time your for loop should print out the number and then the words 
+"is even" or "is odd". You must use an if statement and the mod operator
+ in your solution.</li>
+</ol>
+
+<hr>
+<h2>Extended Learning:</h2>
+<p>Write a program that does these the following.</p><p> First ask the user to enter a positive integer. Store it in n. </p>
+
+<p>Next, your program should generate a random integer using the rand() 
+function that you learned last week. Mod your random integer with 50 and
+ then add 1. The goal is to have a random int in the range of 1 - 50 
+inclusive. </p>
+
+<p>Generate n such random numbers and add them all up and divide by n to calculate an average. Is it close to 25?</p>
+
+<p>Add error checking to your code above so that if the user doesn't 
+enter a positive integer they get another prompt and chance. They should
+ get as many prompts and chances as it takes.</p>
+
+<p>Second, ask the user to enter a string. Store it inside a string 
+variable that you declared to have size 40. Let's assume your string's 
+name is str:
+</p><pre><tt><font color="#009900">int</font> len <font color="#990000">=</font> <b><font color="#000000">strlen</font></b><font color="#990000">(</font>str<font color="#990000">);</font> <i><font color="#9A1900">// make sure you #include &lt;string.h&gt; at the top of your file.</font></i></tt></pre>
+<tt>len</tt> holds the actual length of the string.<p></p>
+
+<p>Write a for loop that uses this information to print the string backward letter by letter.</p>
+<p><b>Hint:</b> If the len variable says that the string is 10 letters long, you want to print: <tt>str[9]</tt>, then <tt>str[8]</tt>, then <tt>str[7]</tt>, and so on until <tt>str[0]</tt></p>
+
+<p>Demonstrate your program to a TA at the beginning of Lab5.</p>
+<hr>
+&nbsp;&nbsp;&nbsp;<a href="mailto:dmcgrath@eecs.oregonstate.edu"><i>D. Kevin McGrath</i></a>
+<br>&nbsp;&nbsp;&nbsp;<i>Last modified:  Mon Feb  6 10:26:37 2012</i>
+</div>
+
+<div data="ih" style="display: none" id="tc_container"></div></body></html>

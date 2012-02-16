@@ -55,8 +55,7 @@ int get_input ( ) {
  * It assumes the start is less than the end.
  */
 void count_up( int start, int end ) {
-	int i;
-	for( i = start; i <= end; ++i ) {
+	for( int i = start; i <= end; ++i ) {
 		printf("%d ", i );
 	}
 	printf("\n");
@@ -68,8 +67,7 @@ void count_up( int start, int end ) {
  * It assumes the start is greater than the end.
  */
 void count_down( int start, int end ) {
-	int i;
-	for( i = start; i >= end; --i ) {
+	for( int i = start; i >= end; --i ) {
 		printf("%d ", i );
 	}
 	printf("\n");
@@ -79,7 +77,7 @@ void count_down( int start, int end ) {
 int main( int argc, char **argv ) {
 	int input = get_input();
 	count_up( MIN, input );
-	count_down( input, MIN );
+	count_down( input, "hello world" );
 	return 0;
 }
 	
