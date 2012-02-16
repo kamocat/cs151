@@ -1,0 +1,14 @@
+1. The rand() function provides a pseudo-random number between 0 and RAND_MAX.
+
+2.
+if( beaver_score > ducks_score ) {
+	printf("WE WON!\n");
+}else{
+	printf("Wait until next year!\n");
+}
+
+
+3.
+if( my_speed > SPEED_LIMIT ) {
+	printf("You have to pay $%d", FINE);
+}

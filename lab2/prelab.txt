@@ -1,0 +1,30 @@
+Marshal Horn		ECE 151
+
+Lab 1 study questions:
+1.
+pwd - Present Working Directory.  This tells me where I am on the computer (what folder the command prompt is currently in)
+
+cd - Change Directory. this command changes my present working directory.  I can go "up" one level by using the command "cd ..", or I can go to an absolute path using "cd /foo/bar/foo_bar"
+
+rm - removes a file.  This is how I delete something.
+
+cp - copies a file or folder. 
+
+mkdir - creates a new folder.
+
+rmdir - deltes a folder.
+
+ls - lists files and folders in the current directory.
+
+
+2. The Computer Science Frehsman Mentor Lounge is in Kelley Engineering Center room 1089.
+
+
+PRELAB:
+
+To determine if an integer is even or odd, I would modulus it by 2.
+
+Example:
+char is_it_odd(int x) {
+	return (x%2);
+}

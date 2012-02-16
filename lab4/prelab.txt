@@ -1,0 +1,41 @@
+/*
+ * Marshal Horn
+ */
+
+
+Lab 3 Study Questions
+1. The rand() function provides a pseudo-random number between 0 and RAND_MAX.
+
+2.
+if( beaver_score > ducks_score ) {
+	printf("WE WON!\n");
+}else{
+	printf("Wait until next year!\n");
+}
+
+
+3.
+if( my_speed > SPEED_LIMIT ) {
+	printf("You have to pay $%d", FINE);
+}
+
+
+
+Lab 4 PRELAB
+1.
+In the C language, = is an assigment operator.  The statement
+x = 5;
+	means that x is now equal to 5.  On the contrary,
+x == 5;
+	tests if x is currently equal to 5 (without assigning it)
+and returns TRUE if they are equal.  (This is the sort of statement
+that would be used in the test clause of an if statement).
+
+
+
+2.  Explain in words what the following C code does:
+if ( q == 9 ) {
+	q = q - 1;
+} else {
+	q = q + 1;
+}
