@@ -37,24 +37,28 @@
 #define POINT_QUANTITY 4
 #define X_AXIS 0
 #define Y_AXIS 1
-double points[][POINT_QUANTITY] = {
-	{1, 0},
-	{-1, 0},
-	{0, 1},
-	{0, -1}
+#define AXIS_STRIDE 2
+double p[][AXIS_STRIDE] = {
+	{ 5.0, -4.0 },
+	{ 4.0,  3.0 },
+	{-1.0,  6.0 },
+	{-9.0,  5.0 }
 };
 
-double intensities[] = { 1, 2, 3, 4 };
+double g[] = { 0.25, 0.57, 0.63, 0.1 };
 
-void calculate_centroid( double intensity[], double coord[][POINT_QUANTITY], 
-		int length, double *centroid_x, double *centroid_y ) {
+void comp_c( int nrows, double p[][AXIS_STRIDE], const double g[], 
+		double centr[AXIS_STRIDE] ) {
 	double intensity_sum = 0;	// sum of all intensities
 	double x_sum = 0;			// sum of intensities multiplied by x values
 	double y_sum = 0;			// sum of intensities multiplied by y values
-	for( int i = 0; i < length; ++i ) {
-		intensity_sum += intensity[i];
-		x_sum += intensity[i] * coord[i][X_AXIS];
-		x_sum += intensity[i] * coord[i][Y_AXIS];
+	for( int i = 0; i < nrows; ++i ) {
+		intensity_sum += g[i];
+		x_sum += g[i] * p[i][X_AXIS];
+		y_sum += g[i] * p[i][Y_AXIS];
+#ifdef DEBUG
+		printf("%f, %f, %f\n", intensity_sum, x_sum, y_sum );
+#endif
 	}
 	/*
 	 * Now that we have the summs of the x and y axis, we need to divide this
@@ -62,25 +66,24 @@ void calculate_centroid( double intensity[], double coord[][POINT_QUANTITY],
 	 * resulting in the "center of mass" of the intensities, which is
 	 * called the centroid.
 	 */
-	*centroid_x = x_sum / intensity_sum;
-	*centroid_y = y_sum / intensity_sum;
+	centr[X_AXIS] = x_sum / intensity_sum;
+	centr[Y_AXIS] = y_sum / intensity_sum;
 }
 
 
 /*
  * This is the wrapper for task 2.
- * It returns an int so errors can be returned to stderr when this is called
- * from the shell terminal.
+ * All its inputs are defined by arrays initialized in this file.
  */
-int task_2 ( ) {
-	double x;
-	double y;
-	calculate_centroid( intensities, points, POINT_QUANTITY, &x, &x );
+void task_2 ( ) {
+	double centr[2];
+	/* Calculate the centroid of the given arrays */
+	comp_c( POINT_QUANTITY, p, g, centr );
 
 	printf("Task 2:\n");
-	printf("The centroid is (%f, %f)\n\n", x, y );
+	printf("centroid = %.3f %.3f\n", centr[X_AXIS], centr[Y_AXIS] );
 
-	return 0;
+	return;
 }
 
 
@@ -99,6 +102,7 @@ int chooser_core( int argc, char **argv, int argi, int function ) {
 			printf("task %d is not yet implemented.\n", function );
 			break;
 	}
+	printf("\n");	// print a new line to separeate tasks
 	/*
 	 * If we just return argi without incrementing, it means
 	 * the selected function did not take any values.
@@ -115,6 +119,11 @@ void tell_useage( char *argument ) {
 int decode_argument( char *string ) {
 	int return_value;
 	int arg = atoi( string );
+	/*
+	 * Because of the preceding dash, atoi reads as negative numbers.
+	 * We negate the value here to fix that.
+	 */
+	arg = -arg;
 	if( ( string[0] == '-' ) && ( arg <= LAST_EXCERCISE ) ) {
 			return_value = arg;
 	} else {
