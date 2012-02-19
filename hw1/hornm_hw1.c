@@ -159,6 +159,99 @@ void task_2 ( ) {
 }
 
 
+/***************************************************************
+ ***************	Task 3		Binary Search		************
+ **************************************************************/
+
+
+/*
+ * This function is a more effecient search than linear search, but will
+ * only work for sorted lists.  It takes the array length, the array
+ * (in double floating point), and the value searched for.  It returns
+ * the index that value was found at.  If that value wasn't found, then this
+ * function returns -1.
+ */
+int binsearch( int n, double data[], double val ) {
+	int range_max = n;
+	int range_min = 0;
+	int current_index;
+	double value_found;
+	
+	/* 
+	 * Use some case logic here to deal with arrays of length 1 or 2 
+	 */
+	if( val == data[range_max] ) {
+		current_index = range_max;
+	} else if ( val == data[range_min] ) {
+		current_index = range_min;
+	} else {
+		/*
+		 * Now we have determined the value isn't at either end of the
+		 * range, we can start the actual binary search.
+		 * What this does is it bisects the range, tests the value at
+		 * that point, and then tightens the range accordingly.
+		 * It should have a maximum search time of log(n) (in log base 2).
+		 */
+		do {
+			/* Check if value can still be found in any tighter range */
+			if( ( range_max - range_min ) <= 1 ) {
+				current_index = -1;	// set to an invalid index
+				break;
+			}
+			/* 
+			 * If it can, set the new index and test.
+			 * Loop will exit if value matches.
+			 */
+			current_index = (range_max + range_min) / 2;
+			value_found = data[ current_index ];
+			if( val < value_found ) {
+				range_max = current_index;
+			} else {
+				range_min = current_index;
+			}
+#ifdef DEBUG
+			printf("%d, %d, %d, %f\n", range_min, current_index, range_max,
+					value_found );
+#endif
+		} while ( value_found != val );
+	}
+	return current_index;
+}
+			
+/* This is the number of elements in sorted[] */
+#define SORTED_LENGTH 13
+/*
+ * This is a wrapper for the binary search.
+ * It provides valid inputs and outputs so the function can be demonstrated.
+ * This wrapper takes void and returns void.
+ */
+void task_3() {
+	/* Declare a sorted array */
+	double sorted[] = { -15.0, -7.9, -2.1, -2.01, -0.56, -0.145, 10.3, 
+		14.0, 19.75, 23.4, 50.673, 200.0, 9001.0 };
+	double wanted = -2.01;		// this is the value to be searched for
+
+	/* Print the array and the value wanted */
+	printf("Task 3:\nArray: ");
+	for( int i = 0; i < SORTED_LENGTH; ++i ) {
+		printf("%f, ", sorted[i] );
+	}
+	printf("\nWanted: %f\n", wanted );
+
+	int found_at = binsearch( SORTED_LENGTH, sorted, wanted );
+
+	if( found_at >= 0 ) {
+		printf("Found at index %d\n", found_at );
+	} else {
+		printf("This value was not found in the array.  Sad day.\n" );
+	}
+
+}
+
+	
+
+
+
 
 /***********************************************
  ***********	Program chooser		************
@@ -171,6 +264,9 @@ int chooser_core( int argc, char **argv, int argi, int function ) {
 			break;
 		case 2:
 			task_2();
+			break;
+		case 3:
+			task_3();
 			break;
 
 		default:
