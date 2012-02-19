@@ -27,6 +27,75 @@
 #include <stdlib.h>
 
 
+/***************************************************************
+ ***************	Task 1		Excercise 10.7		************
+ ***	Find the daily mean of an array of websit hits 		****
+ **************************************************************/
+
+#define DAYS 7
+#define WEEKS 5
+
+/*
+ * This function takes a two-dimensional array of daily website hits
+ * (With the days in the columns and the weeks in the rows)
+ * and calculates the average for each day of the week (in other
+ * words, for each column).
+ * This is saved to the histogram[] array that is passed in.
+ * It is assumed that only whole-number values are important,
+ * so this function uses integer division instead of floating-point.
+ */
+void calc_day_histogram( int daily_hits[][DAYS], int weeks, 
+		int histogram[] ) {
+	/* Initialize the histogram to zero */
+	for( int d = 0; d < DAYS; ++d ) {
+		histogram[d] = 0;
+	}
+
+	for( int w = 0; w < weeks; ++w ) {
+		for( int d = 0; d < DAYS; ++d ) {
+			histogram[d] += daily_hits[w][d];
+#ifdef DEBUG
+			printf("%d, %d, %d\n", w, d, histogram[d] );
+#endif
+		}
+	}
+	/*
+	 * Now that we've added up the hits for each day of the week,
+	 * we need to divide them by the number of weeks.
+	 */
+	for( int d = 0; d < DAYS; ++d ) {
+		histogram[d] /= weeks;
+	}
+}
+
+
+void task_1() {
+	/* Define variables */
+	int a[WEEKS][DAYS] = { 
+		{ 367, 654, 545, 556, 565, 526, 437},
+		{ 389, 689, 554, 526, 625, 537, 468},
+		{ 429, 644, 586, 626, 652, 546, 493},
+		{ 449, 689, 597, 679, 696, 568, 522},
+		{ 489, 729, 627, 729, 737, 598, 552}
+	};
+	int histogram[DAYS];
+
+	/* Now calculate the average for each day of the week */
+	calc_day_histogram( a, WEEKS, histogram );
+	
+	/* Now print the histogram so the user can see */
+	printf("Task 1:\nSun\tMon\tTues\tWed\tThurs\tFri\tSat\n" );
+	for( int i = 0; i < DAYS; ++i ) {
+		printf("%d\t", histogram[i] );
+	}
+	printf("\n");
+
+}
+
+
+
+
+
 
 /******************************************************************
  ***************	Task 2		Excercise 10.10		***************
@@ -38,14 +107,6 @@
 #define X_AXIS 0
 #define Y_AXIS 1
 #define AXIS_STRIDE 2
-double p[][AXIS_STRIDE] = {
-	{ 5.0, -4.0 },
-	{ 4.0,  3.0 },
-	{-1.0,  6.0 },
-	{-9.0,  5.0 }
-};
-
-double g[] = { 0.25, 0.57, 0.63, 0.1 };
 
 void comp_c( int nrows, double p[][AXIS_STRIDE], const double g[], 
 		double centr[AXIS_STRIDE] ) {
@@ -73,10 +134,21 @@ void comp_c( int nrows, double p[][AXIS_STRIDE], const double g[],
 
 /*
  * This is the wrapper for task 2.
- * All its inputs are defined by arrays initialized in this file.
+ * All its inputs are defined internally.
  */
 void task_2 ( ) {
+	/* Declare variables */
+	double p[][AXIS_STRIDE] = {
+		{ 5.0, -4.0 },
+		{ 4.0,  3.0 },
+		{-1.0,  6.0 },
+		{-9.0,  5.0 }
+	};
+
+	double g[] = { 0.25, 0.57, 0.63, 0.1 };
 	double centr[2];
+
+
 	/* Calculate the centroid of the given arrays */
 	comp_c( POINT_QUANTITY, p, g, centr );
 
@@ -94,6 +166,9 @@ void task_2 ( ) {
 #define LAST_EXCERCISE 9
 int chooser_core( int argc, char **argv, int argi, int function ) {
 	switch( function ) {
+		case 1:
+			task_1();
+			break;
 		case 2:
 			task_2();
 			break;
@@ -102,7 +177,11 @@ int chooser_core( int argc, char **argv, int argi, int function ) {
 			printf("task %d is not yet implemented.\n", function );
 			break;
 	}
-	printf("\n");	// print a new line to separeate tasks
+
+
+	/* Always print a new line to seperate the tasks. */
+	printf("\n"); 
+
 	/*
 	 * If we just return argi without incrementing, it means
 	 * the selected function did not take any values.
