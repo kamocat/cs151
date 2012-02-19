@@ -250,6 +250,79 @@ void task_3() {
 
 	
 
+/***************************************************************
+ ***************	Task 4		Evaluate Polynomials	********
+ **************************************************************/
+
+/*
+ * This function is a recursive method of evaluating polynomials, as
+ * required by excercise 10.33.
+ * It works by multiplying the coeffecient by x to the current power
+ * (called indexed_x), and then adding that to the sums of all the other
+ * coeffecients multiplied by their respective indexed_x.
+ * For initialization, the index should start at zero, and indexed_x
+ * should start at 1.  This is taken care of by the wrapper function 
+ * that follows.
+ */
+double calc_poly_core( double coef[], int highest_ex, int index, double x,
+		double indexed_x ) {
+	double sum = indexed_x * coef[index];
+	if( index <= highest_ex ) {
+		++index;
+		indexed_x *= x;
+		sum += calc_poly_core( coef, highest_ex, index, x, indexed_x );
+	}
+	return sum;
+}
+
+/*
+ * This function serves as a wrapper for calc_poly_core so the user
+ * doesn't have to enter the seed values for the index and the indexed_x.
+ * In fact, this means the variables called by calc_poly_core can be
+ * changed or rearranged without impacting how somone calls calc_poly.
+ * I think that is especially useful in this situation because this
+ * recursive method seems horribly inneffecient, both in the overhead
+ * from function calls, and all the variables that are created.
+ */
+double calc_poly( double coef[], int highest_ex, double x ) {
+	return calc_poly_core( coef, highest_ex, 0, x, 1 );
+}
+
+/* Define highest exponents of polynomial arrays */
+#define A_HI_EX 5
+#define B_HI_EX 6
+#define C_HI_EX 7
+#define D_HI_EX 8
+
+void task_4( char polynomial ) {
+	printf("Task 4:\n");
+	double a[] = {-1, 5, 0, 10, -15, 1};
+
+	/* We are told to evauate the polynomial at x = 2.5 */
+	double x = 2.5;
+	double *poly;
+	double poly_hi_ex;
+	switch( polynomial ) {
+		case 'a':
+			poly = a;
+			poly_hi_ex = A_HI_EX;
+		default:
+			printf("%c is not a valid option. ", polynomial );
+			printf("Task 4 takes options a through d\n");
+			return; 	// quit this function
+	}
+
+	/* Print out the polynomial */
+	for( int i = poly_hi_ex; i <= 0; --i ) {
+		printf("%.2fx^%d + ", poly[i], i );
+	}
+	printf("\nx = %.2f\n", x );
+
+	double result = calc_poly( poly, poly_hi_ex, x );
+	printf("Result: %f\n", result );
+
+}
+
 
 
 
@@ -267,6 +340,11 @@ int chooser_core( int argc, char **argv, int argi, int function ) {
 			break;
 		case 3:
 			task_3();
+			break;
+		case 4: 
+			/* Pass the first character of the next argument */
+			task_4( argv[argi][0] );
+			++argi;
 			break;
 
 		default:
