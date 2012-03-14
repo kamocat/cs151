@@ -30,6 +30,11 @@
 
 /* ERROR codes */
 #define FILE_NOT_FOUND -404
+#define STUDENT_NOT_FOUND -304
+#define ASSIGNMENT_NOT_FOUND -204
+#define OVERWRITE_STUDENT -310
+#define OVERWRITE_ASSIGNMENT -210
+#define BAD_INPUT -9000
 
 
 /*
@@ -107,6 +112,122 @@ int release_student( struct node *student ) {
 
 
 /*
+ * get assignment grade
+ *
+ * int error = ASIGNMENT_NOT_FOUND
+ * grades = student->assignments
+ * for( length of array )
+ * 		if( strcmp( grades[i].assignment, assignment) == 0 )
+ * 			error = NO_ERROR
+ * 			*score = grades[i].score
+ * 		else
+ * 			++i
+ *
+ * return error
+ *
+ */
+int get_assignment( struct node *student, char *assignment, double *score );
+	int error = ASIGNMENT_NOT_FOUND;
+	struct assignment *grades = student->assignments;
+	for( int i = 0; i < (student->num_assignments); ++i ){
+		if( strcmp( grades[i].assignment, assignment) == 0 ){
+			error = 0;
+			*score = grades[i].score;
+			break;
+		}
+	}
+
+	return error;
+}
+
+
+
+
+/*
+ * Return first element in list
+ */
+struct node *get_first( struct node *head ) {
+	while( head->previous != NULL ) {
+		head = head->previous;
+	}
+	return head;
+}
+
+
+/*
+ * Return length of list
+ *
+ * start at first element
+ * int length = 0
+ * while( element_pointer != NULL )
+ * 		go to next element
+ * 		++length
+ * return length
+ */
+int get_length( struct node *head ) {
+	int length = 0;
+	while( head != NULL ) {
+		head = head->next;
+		++length;
+	}
+	return length;
+}
+
+
+
+/*
+ * Return nth element from list
+ *
+ * int error
+ * for( n )
+ * 		if( head->next != NULL )
+ * 			head = head->next
+ * 		else
+ * 			error = ELEMENT_NOT_FOUND
+ * 			break
+ *
+ * If there's no error, then we can update the value at element
+ * if( !error )
+ * 		*element = head
+ *
+ * return error
+ */
+int get_nth_element( struct node *head, int n, struct node **element ) {
+	int error = 0;
+	for( int i = 0; i < n; ++i ) {
+		if( (head->next) != NULL ) {
+			head = head->next;
+		} else {
+			error = ELEMENT_NOT_FOUND;
+			break;
+		}
+	}
+	if( !error ) {
+		*element = head;
+	}
+	return error;
+}
+
+/*
+ * Return last element in list
+ *
+ * while( head->next != NULL )
+ * 		head = head->next
+ *
+ * return head
+ */
+struct node* get_last( struct node *head ) {
+	if( head != NULL ) {
+		while( (head->next) != NULL ) {
+			head = head->next;
+		}
+	}
+	return head;
+}
+
+
+
+/*
  * Search the list by last name (first name optional)
  *
  * Start with the first element
@@ -141,7 +262,7 @@ int search_for_element( struct node *head, char *last, char *first,
 	 * This should return a nonzero value so that the insert feature works.
 	 * We are not concerned with the actual search feature at the moment.
 	 */
-	return (-100);
+	return STUDENT_NOT_FOUND;
 }
 
 /*
@@ -161,76 +282,6 @@ int search_for_first_name( struct node *head, char *first,
 		struct node **address );
 
 
-/*
- * get assignment grade
- *
- * int error = ASIGNMENT_NOT_FOUND
- * grades = student->assignments
- * for( length of array )
- * 		if( strcmp( grades[i].assignment, assignment) == 0 )
- * 			error = NO_ERROR
- * 			*score = grades[i].score
- * 		else
- * 			++i
- *
- * return error
- *
- */
-int get_assignment( struct node *student, char *assignment, double *score );
-
-
-/*
- * Return length of list
- *
- * start at first element
- * int length = 0
- * while( element_pointer != NULL )
- * 		go to next element
- * 		++length
- * return length
- */
-int get_length( struct node *head );
-
-
-/*
- * Return nth element from list
- *
- * int error
- * for( n )
- * 		if( head->next != NULL )
- * 			head = head->next
- * 		else
- * 			error = ELEMENT_NOT_FOUND
- * 			break
- *
- * If there's no error, then we can update the value at element
- * if( !error )
- * 		*element = head
- *
- * return error
- */
-int get_nth_element( struct node *head, int n, struct node **element );
-
-
-/*
- * Return first element in list
- */
-struct node *get_first( struct node *head ) {
-	while( head->previous != NULL ) {
-		head = head->previous;
-	}
-	return head;
-}
-
-/*
- * Return last element in list
- *
- * while( head->next != NULL )
- * 		head = head->next
- *
- * return head
- */
-struct node* get_last( struct node *head );
 
 
 
@@ -287,13 +338,6 @@ double mean( double *array, int length ) {
 
 
 /*
- * Calculate median
- *
- * This function sorts the array.  Do not use it where the array must
- * stay unsorted
- */
-
-/*
  * This function is made to work with a sorting function.
  * So, it should return 1 if a is greater, -1 if b is less,
  * or 0 if they are equal.
@@ -315,6 +359,13 @@ int cmpdouble( const void *arg1, const void *arg2 ) {
 	return return_value;
 }
 
+
+/*
+ * Calculate median
+ *
+ * This function sorts the array.  Do not use it where the array must
+ * stay unsorted
+ */
 double median( double *array, int length ) {
 	qsort( array, length, sizeof(double), cmpdouble );
 
@@ -367,8 +418,33 @@ double std_dev( double *array, int length, double mean ) {
  * free( array )
  * return statistics
  */
-struct stats stats_on_assignment( struct node *head, char *assignment );
+struct stats stats_on_assignment( struct node *head, char *assignment ) {
 
+	int length = get_length( head );
+	double *array = malloc( length * sizeof(double) );
+	double *score;
+	int error;
+
+	for( int i = 0; i < length; ++i ) {
+		error = get_assignment( head, assignment, score );
+		if( error ) {
+			printf("%s, %s does not have a grade for assignment %s.\n",
+				last, first, assignment );
+			array[i] = 0;
+		} else {
+			array[i] = score;
+		}
+	}
+
+	struct stats statistics;
+	statistics.mean = mean( array, length );
+	statistics.median = median( array, length );
+	statistics.stddev = std_dev( array, length, statistics.mean );
+
+	free( array );
+	return statistics;
+}
+	
 
 
 /*
@@ -389,7 +465,22 @@ struct stats stats_on_assignment( struct node *head, char *assignment );
  * free( array )
  * return statistics
  */
-struct stats stats_on_individual( struct node *student );
+struct stats stats_on_individual( struct node *student ){
+	length = student->num_assignments;
+	double *array = malloc( length * sizeof(double) );
+
+	for( int i = 0; i < length; ++i ) {
+		array[i] = student->assignments[i].value;
+	}
+
+	struct stats statistics;
+	statistics.mean = mean( array, length );
+	statistics.median = median( array, length );
+	statistics.stddev = std_dev( array, length, statistics.mean );
+
+	free( array );
+	return statistics;
+}
 
 
 
@@ -412,6 +503,7 @@ struct stats stats_on_individual( struct node *student );
 int insert_student( struct node **head, char *first, char *last,
 		struct assignment *grades, int number_of_assignments ) {
 
+	int error = 0;
 	struct node *new = malloc(sizeof(struct node) );
 	copy_string( &(new->first_name), first );
 	copy_string( &(new->last_name), last );
@@ -443,12 +535,10 @@ int insert_student( struct node **head, char *first, char *last,
 		 * Print warning to user, and don't create element.
 		 */
 		release_student( new );
+		error = OVERWRITE_STUDENT;
 	}
 		
-	/*
-	 * No error codes implemented yet
-	 */
-	return 0;
+	return error;
 }
 
 
@@ -471,6 +561,64 @@ char * seperate_string( char *string ) {
 	}
 	return second;
 }
+
+
+/*
+ * Interpret student from line of text
+ * and add student to array
+ */
+
+int interpret_line( **head, char *line ) {
+	int error = 0; //start with no error
+	char *last;
+	char *first;
+	char *score;
+	char *end;
+	double value;
+	int i = 0;
+	struct assignment *grade_pairs;
+	last = line;
+	first = seperate_string( last );
+	line = seperate_string( first );
+
+	/*
+	 * If the name is valid, we can continue.
+	 * Otherwise, skip this student.
+	 */
+	if(( strlen(first) > 0 ) && ( strlen(last) > 0 )){
+		grade_pairs = malloc( sizeof(struct assignment)
+				* MAX_NUM_ASSIGNMENTS );
+		
+		/* store each assignment */
+		do{
+			score = seperate_string( line );
+			value = strtod( score, &end );
+
+			if( score != end ) {
+				copy_string( &(grade_pairs[i].name), line );
+				grade_pairs[i].score = value;
+				++i;
+			}
+			if( i >= MAX_NUM_ASSIGNMENTS ) {
+				/* We have all the assignments we can hold */
+				printf("%s %s has reached the maximum number of",
+						first, last );
+				printf(" assignments, which is capped at %d.\n",
+						MAX_NUM_ASSIGNMENTS );
+			}
+
+			/*
+			 * Skip the next comma and go to the
+			 * next assignment
+			 */
+			line = seperate_string( end );
+		/* loop until we've reached the end of the line */
+		} while( *line != '\0' ); 
+		error = insert_student( head, last, first, grade_pairs, i );
+	} else {
+		error = BAD_INPUT;
+	}
+	return error;
 
 
 /*
@@ -544,7 +692,7 @@ void enter_new( struct node **head ) {
  *
  * It returns an error as an integer.
  */
-int read_file( char *filename ) {
+int read_file( struct node **head, char *filename ) {
 	char readonly = 'r';
 	FILE *gradebook = fopen( filename, &readonly );
 	int error = FILE_NOT_FOUND;
@@ -556,64 +704,19 @@ int read_file( char *filename ) {
 		 * the file
 		 */
 		char storage[MAX_LINE_LENGTH];
-		char *line;
-		char *last;
-		char *first;
-		char *score;
-		char *end;
-		double value;
-		int i;
-		struct assignment *grade_pairs;
 
 		/* Make an entry for each student in the file */
 		do{
-			line = storage; // reset to the beginning of allocated space
-			fgets( line, MAX_LINE_LENGTH, gradebook );
-			last = line;
-			first = seperate_string( last );
-			line = seperate_string( first );
-
-			/*
-			 * If the name is valid, we can continue.
-			 * Otherwise, skip this student.
-			 */
-			if(( strlen(first) > 0 ) && ( strlen(last) > 0 )){
-				grade_pairs = malloc( sizeof(struct assignment) 
-						* MAX_NUM_ASSIGNMENTS );
-				i = 0;
-				
-				/* store each assignment */
-				do{
-					score = seperate_string( line );
-					value = strtod( score, &end );
-
-					if( score != end ) {
-						copy_string( &(grade_pairs[i].name), line );
-						grade_pairs[i].score = value;
-						++i;
-					}
-					if( i >= MAX_NUM_ASSIGNMENTS ) {
-						/* We have all the assignments we can hold */
-						printf("%s %s has reached the maximum number of",
-								first, last );
-						printf(" assignments, which is capped at %d.\n",
-								MAX_NUM_ASSIGNMENTS );
-					}
-
-					/*
-					 * Skip the next comma and go to the
-					 * next assignment
-					 */
-					line = seperate_string( end );
-				/* loop until we've reached the end of the line */
-				} while( *line != '\0' ); 
-			}
+			fgets( storage, MAX_LINE_LENGTH, gradebook );
 		/* loop until we reach the end of the file */
 		} while( last != NULL );
 
 	}
 	return error;
 }
+
+
+
 /*
  * Command chooser
  * This executes a function based on user input
