@@ -66,7 +66,7 @@ struct stats{
  * Create a new space and copy a string over
  */
 void copy_string( char **target, char *source ) {
-	*target = malloc( strlen(source) );
+	*target = (char *)malloc( strlen(source) );
 	strcpy( *target, source);
 }
 
@@ -75,7 +75,8 @@ void copy_string( char **target, char *source ) {
  */
 void copy_grades( struct assignment **copy, struct assignment *source,
 		int number_of_grades ) {
-	*copy = malloc( number_of_grades * sizeof(struct assignment) );
+	*copy = (struct assignment *)malloc( number_of_grades 
+			* sizeof(struct assignment) );
 
 	for( int i = 0; i < number_of_grades; ++i ) {
 		*copy[i] = source[i];
@@ -126,11 +127,11 @@ int release_student( struct node *student ) {
  * return error
  *
  */
-int get_assignment( struct node *student, char *assignment, double *score );
-	int error = ASIGNMENT_NOT_FOUND;
-	struct assignment *grades = student->assignments;
+int get_assignment( struct node *student, char *assignment, double *score ){
+	int error = ASSIGNMENT_NOT_FOUND;
+	struct assignment *grades = student->grades;
 	for( int i = 0; i < (student->num_assignments); ++i ){
-		if( strcmp( grades[i].assignment, assignment) == 0 ){
+		if( strcmp( grades[i].name, assignment) == 0 ){
 			error = 0;
 			*score = grades[i].score;
 			break;
@@ -198,7 +199,7 @@ int get_nth_element( struct node *head, int n, struct node **element ) {
 		if( (head->next) != NULL ) {
 			head = head->next;
 		} else {
-			error = ELEMENT_NOT_FOUND;
+			error = STUDENT_NOT_FOUND;
 			break;
 		}
 	}
@@ -421,7 +422,7 @@ double std_dev( double *array, int length, double mean ) {
 struct stats stats_on_assignment( struct node *head, char *assignment ) {
 
 	int length = get_length( head );
-	double *array = malloc( length * sizeof(double) );
+	double *array = (double *)malloc( length * sizeof(double) );
 	double *score;
 	int error;
 
@@ -429,10 +430,10 @@ struct stats stats_on_assignment( struct node *head, char *assignment ) {
 		error = get_assignment( head, assignment, score );
 		if( error ) {
 			printf("%s, %s does not have a grade for assignment %s.\n",
-				last, first, assignment );
+				head->last_name, head->first_name, assignment );
 			array[i] = 0;
 		} else {
-			array[i] = score;
+			array[i] = *score;
 		}
 	}
 
@@ -466,11 +467,11 @@ struct stats stats_on_assignment( struct node *head, char *assignment ) {
  * return statistics
  */
 struct stats stats_on_individual( struct node *student ){
-	length = student->num_assignments;
+	int length = student->num_assignments;
 	double *array = malloc( length * sizeof(double) );
 
 	for( int i = 0; i < length; ++i ) {
-		array[i] = student->assignments[i].value;
+		array[i] = student->grades[i].score;
 	}
 
 	struct stats statistics;
@@ -568,7 +569,7 @@ char * seperate_string( char *string ) {
  * and add student to array
  */
 
-int interpret_line( **head, char *line ) {
+int interpret_line( struct node **head, char *line ) {
 	int error = 0; //start with no error
 	char *last;
 	char *first;
@@ -640,7 +641,8 @@ void enter_new( struct node **head ) {
 	printf("Now enter up to 100 assignment grade pairs as");
 	printf(" assignment, grade (fractional)\n");
 	struct assignment *grade_pairs;
-	grade_pairs = malloc( sizeof(struct assignment) * MAX_NUM_ASSIGNMENTS );
+	grade_pairs = (struct assignment *)malloc( sizeof(struct assignment) 
+			* MAX_NUM_ASSIGNMENTS );
 
 	int i = 0;
 	char input[MAX_STRING_LENGTH];
