@@ -1,5 +1,8 @@
-*
-!.gitignore
+*/*
 !*.h
 !*.c
+!README
+!*.txt
+.*
+!.gitignore
 
