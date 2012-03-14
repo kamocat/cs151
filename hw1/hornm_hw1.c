@@ -1,5 +1,9 @@
 /*
  * Original Author: Marshal Horn
+ * Collaborators:
+ * 	Robert Plascencia :: Sieve of Eratosthenes
+ *
+ *
  * File: hornm_hw1.c
  * Created: 2012 Feb 16 at 6:56 PM
  * Modified: 2012 Feb 16 at 6:56 PM
@@ -9,22 +13,17 @@
  * (2)	10.10
  * (3)	10.30
  * (4)	10.33 (EC)
- * (5)	11.6
- * (6)	11.7
+ * (5)	Write a program which uses pointers and arrays to perform matrix
+ *  	multiplication.
+ * (6)	Sieve or Eratosthenes
+ *  	(EC is using command-line argument for this)
  *
- * (7)	Write a program which uses pointers and arrays to perform matrix
- * multiplication.
- *
- * (8)	Sieve or Eratosthenes
- * (EC is using command-line argument for this)
- *
- * (9)	Write a function that concatenates the string s2 to the end of 
- * string s1 using pointers.
  *
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 
 /***************************************************************
@@ -297,6 +296,9 @@ double calc_poly( double coef[], int highest_ex, double x ) {
 void task_4( char polynomial ) {
 	printf("Task 4:\n");
 	double a[] = {-1, 5, 0, 10, -15, 1};
+	double b[] = {-1, 5, -20, 0, -15, 1, 3};
+	double c[] = {-1, 5, -20, 10, 0, 1, 5, 2};
+	double d[] = {-1, 2, -3, 0, -15, 1, 1, 2, 3};
 
 	/* We are told to evauate the polynomial at x = 2.5 */
 	double x = 2.5;
@@ -306,6 +308,19 @@ void task_4( char polynomial ) {
 		case 'a':
 			poly = a;
 			poly_hi_ex = A_HI_EX;
+			break;
+		case 'b':
+			poly = b;
+			poly_hi_ex = B_HI_EX;
+			break;
+		case 'c':
+			poly = c;
+			poly_hi_ex = C_HI_EX;
+			break;
+		case 'd':
+			poly = d;
+			poly_hi_ex = D_HI_EX;
+			break;
 		default:
 			printf("%c is not a valid option. ", polynomial );
 			printf("Task 4 takes options a through d\n");
@@ -313,10 +328,13 @@ void task_4( char polynomial ) {
 	}
 
 	/* Print out the polynomial */
-	for( int i = poly_hi_ex; i <= 0; --i ) {
+	printf("Polynomial: \n");
+	for( int i = poly_hi_ex; i > 0; --i ) {
 		printf("%.2fx^%d + ", poly[i], i );
 	}
-	printf("\nx = %.2f\n", x );
+	printf("%.2f\n", poly[0] );
+
+	printf("let x = %.2f\n", x );
 
 	double result = calc_poly( poly, poly_hi_ex, x );
 	printf("Result: %f\n", result );
@@ -324,12 +342,132 @@ void task_4( char polynomial ) {
 }
 
 
+/***************************************************************
+ ***************	Task 6		Sieve of Erathosnes		********
+ **************************************************************/
 
+#define ARRAY_OFFSET 2
+
+/*
+ * This function finds the next prime in the list.  It assumes that all
+ * the composites between the present index and the next prime have been
+ * overwritten as zero.
+ * It returns the index of the next prime.
+ */
+int find_next_prime( int array[], int index, int length ) {
+	do{
+		++index;
+		if( index >= length ) {
+			index = -1;
+			break;
+		}
+	} while( array[index] == 0 );
+#ifdef DEBUG
+	printf("Next prime: %d (%d)\n", index, array[index] );
+#endif
+	return index;
+}
+
+/*
+ * This function removes the multiples of an integer from a list of
+ * consecutive integers by overwriting them with zero.
+ * It relies on the macro ARRAY_OFFESET to deal with the offset of
+ * the array.
+ * This function does not return a value.
+ */
+void remove_multiples( int array[], int index, int length ) {
+	/* Decrease length so we don't accidentally run off the end */
+	int prime = array[ index ];
+	int multiple = 2*prime - ARRAY_OFFSET;
+	for( ; multiple <= length; multiple += prime ) {
+		array[ multiple ] = 0;
+	}
+}
+
+/*
+ * This function takes the list of primes and shoves them all up to the
+ * top of the array, so there are no zeros in between.
+ */
+int stuff_together( int array[], int length ) {
+	int next_prime = 0;	// This is the index we are cutting the prime from.
+	int stuff_it = 0;	// This is the index we are pasting the prime to.
+
+	while( next_prime >= 0 ) {	// While there is still a next prime
+		/*
+		 * Before we cut and paste, we need to make sure of two things:
+		 * (1) that we are not copying and pasting to the same place
+		 * (2) that the place we are copying from actually exists
+		 * This single evaluation takes care of both of those
+		 */
+		if( next_prime > stuff_it ) {
+			array[ stuff_it ] = array[ next_prime ];
+			array[ next_prime ] = 0;
+		}
+		++stuff_it;
+		next_prime = find_next_prime( array, next_prime, length );
+	}
+	/* we return the number of valid elements in the array */
+	return (stuff_it );
+}
+
+/*
+ * This is the sieve of Erasthones.
+ * Given a list of consecutive integers (starting at 2), this will replace
+ * it with the list of primes.
+ */
+int sieve_primes( int array[], int length ) {
+	int index = 0;
+	// int limit = (int)sqrt(length) + 1;
+	while( index >= 0 ) {
+		/* 
+		 * Since the first element is prime, we can remove multiples before
+		 * we find the next prime.
+		 */
+		remove_multiples( array, index, length );
+		index = find_next_prime( array, index, length );
+	}
+#ifdef DEBUG
+	printf("Now we stuff the primes together consecutively\n");
+#endif
+	length = stuff_together( array, length );
+
+	return length;
+}
+
+
+void task_6( int n ) {
+	printf("Task 6:\n" );
+
+	n = n + 1 - ARRAY_OFFSET;
+	int array[n];
+	for( int i = 0; i < n; ++i ) {
+		array[i] = i + ARRAY_OFFSET;
+	}
+	int prime_quant = sieve_primes( array, n );
+
+	/* Print the results */
+	printf("There are %d primes between 2 and %d:\n", prime_quant, n );
+	for( int i = 0; i < prime_quant; ++i ) {
+		printf("%d, ", array[i] );
+	}
+	printf("\n");
+}
+		
 
 /***********************************************
  ***********	Program chooser		************
  **********************************************/
 #define LAST_EXCERCISE 9
+
+char not_seg( int argc, int argi, int function ) {
+	int return_value = 1;
+	if( argi >= argc ) {
+		return_value = 0;
+		printf("Task %d requires an argument.\n", function );
+	}
+	return return_value;
+}
+
 int chooser_core( int argc, char **argv, int argi, int function ) {
 	switch( function ) {
 		case 1:
@@ -343,7 +481,16 @@ int chooser_core( int argc, char **argv, int argi, int function ) {
 			break;
 		case 4: 
 			/* Pass the first character of the next argument */
-			task_4( argv[argi][0] );
+			if( not_seg( argc, argi, function ) ) {
+				task_4( argv[argi][0] );
+			}
+			++argi;
+			break;
+
+		case 6:
+			if( not_seg( argc, argi, function ) ) {
+				task_6( atoi( argv[argi] ) );
+			}
 			++argi;
 			break;
 
@@ -371,16 +518,15 @@ void tell_useage( char *argument ) {
 
 int decode_argument( char *string ) {
 	int return_value;
-	int arg = atoi( string );
 	/*
-	 * Because of the preceding dash, atoi reads as negative numbers.
-	 * We negate the value here to fix that.
+	 * Because we are assuming the first character is a dash, we will
+	 * skip the first character when we read from the string.
 	 */
-	arg = -arg;
+	int arg = atoi( &string[1] );
 	if( ( string[0] == '-' ) && ( arg <= LAST_EXCERCISE ) ) {
-			return_value = arg;
+		return_value = arg;
 	} else {
-			return_value = 0;
+		return_value = 0;
 	}
 	return return_value;
 }

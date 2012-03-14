@@ -1,0 +1,409 @@
+Written portion
+Marshal Horn
+CS 151 HW1 (Assignment 2)
+
+10.2 Find the errors in each of the following program segments, and explain how
+each error can be fixed.
+
+a.
+char str[5];
+scanf("%s", str);	/* User types hello */
+The issue with this is that the string array is not large enough to hold the
+string you are scanning.  "hello" is only 5 characters, but that doesn't leave
+room for the null character at the end.  We can fix this by saying str[] is 6
+long when we initialize it.  (If we want to catch the situation where the user
+types more than 5 characters, we could use getchar(), and only save the first
+five characters.)
+
+b.
+int a[3];
+printf("%d %d %d\n", a[1], a[2], a[3] );
+There are two issues with this code.
+The first is that a[] has not been initialized.  At this moment we don't know
+what value it contains.  We can fix this by initializing it.
+The second issue is that a[3] will produce a seg fault.  a[] is only 3 long, so
+its elements are a[0], a[1], and a[2].  We can fix this by printing a[0], a[1],
+and a[2].
+
+c.
+double f[3] = {1.1, 10.01, 100.001, 1000.001};
+The issue here is that we declare f[] to be 3 elements long, but we try to put
+four elements into it.  We could fix this by declaring f[] to be four elements
+long.
+
+d.
+double d[2][10];
+d[1,9] = 2.345;
+Here we have used the wrong notation for accessing an element of the array.
+We should instead say:
+d[1][9] = 2.345;
+
+
+10.4 Identify and correct the errors in the following code.  Briefly explain them.
+int N;
+int M = 90;
+
+int function4( int n ) {
+	int i;
+	int m = n;
+	int a[n][n];
+	int b[n][m];
+	
+	/* What are they trying to do here?  A printf doesn't return a value. */
+	int c[printf("%d\n", n)][n];
+
+	int d[n][N]; // N has not been initialized
+	int e[n][M];
+
+	int f[n] = {1, 2, 3, 4};
+	static int g[n];	// we can't declare a variable-length array as static
+
+	for( i = 0; i < n; i++ ) {
+		a[i][i] = 3 + b[i][i];	// b[][] has not been initialized
+		/* 
+		 * Another issue with this loop is it will only set the diagonals equal.
+		 * For example, it will set a[0][0] = b[0][0] + 3, but it won't set
+		 * a[0][1] = b[0][1] + 3.
+		 */
+	}
+	/* This function should return an int */
+}
+
+funct4(4);	// This should be in the main function.
+
+
+
+Alright, so here's what it SHOULD look like:
+
+int N = 2;	// we need to initialize N to something.
+int M = 90;
+
+int function4( int n ) {
+	int i;
+	int m = n;
+	int a[n][n];
+	int b[n][m];
+	/* Initialize b to something */
+	for( i = 0; i < n*m; ++i ) {
+		b[i/n][i%n] = i;
+	}
+
+	int c[n][n];
+	int d[n][N]; 
+	int e[n][M];
+	int f[n] = {1, 2, 3, 4};
+	int g[n];
+	/*
+	 * The creator probably declared g[] as static so it would be initialized 
+	 * to zero.  However, since we can't create a static variable-length array
+	 * (a static variable is created before the program executes), we will 
+	 * declare it normally, and initialize it to zero after it is declared.
+	 */
+	for( i = 0; i < n; ++i ) {
+		g[i] = 0;
+	}
+
+	int j;
+	for( i = 0; i < n; i++ ) {
+		for( j = 0; j < n; ++j ) {
+			a[i][j] = 3 + b[i][j];	
+		}
+	}
+	/*
+	 * I'm not sure what value this should return, but it should be an int.
+	 * I'll hazard a guess and say it returns the error number.
+	 */
+	return 0;	
+}
+
+int main( int argc, char **argv ) {
+	return funct4(4);
+}
+
+
+11.1 Identify and correct the errors, if there are any, inthe following
+program segments.  If there are errors, briefly explain them.
+
+a.
+int *number;
+printf("%d\n", *number);
+BOOM!  My head just exploded.  I tried to dereference a pointer that was not
+assigned a pointee.
+We can fix this by using malloc() and creating a pointee, like so:
+int *number;
+number = malloc( sizeof( int ) );
+printf("%d\n", *number );
+/*
+ * While we still don't know the value number points to, we now know it points
+ * to a value.  Perhaps we just want to see what value was previously stored
+ * in an unkown point in memory.
+ */
+
+b.
+float *realPtr;
+int *integerPtr;
+integerPtr = realPtr;
+/*
+ * This here doesn't make a whole lot of sense.
+ * The things is, we now made a pointer to an int point to a double.
+ * (At this point, neither actually point to anything, but they both point
+ * to the same place).  I'm assuming what we actually wanted to do here was
+ * to make realPtr point to a value, and integerPtr point to a value, and
+ * set the value integerPtr points to be the truncated version of the value 
+ * realPtr points to.
+ * Here's how I would do that:
+ */
+float *realPtr = malloc( sizeof(float) );
+int *integerPtr = malloc( sizeof(int) );
+*integerPtr = *realPtr;
+
+
+c.
+int *x, y;
+x = y;
+/*
+ * Another pointer connundrum.  This doesn't make sense because we're setting
+ * a pointer equal to an arbitrary integer.  I'll assume we simply wanted x to
+ * point to y.
+ */
+int *x;
+int y;
+x = &y;
+
+
+d.
+char s[] = "this is a character array";
+for( ; *s != '\0'; s++ ) {
+	printf("%c ", *s);
+}
+/*
+ * I don't see anything wrong with the syntax, though this is a strange task
+ * to do.
+ */
+
+
+e.
+short *numPrt, result;
+void *genericPtr = numPtr;
+result = *genericPtr + 7;
+/*
+ * The the issue with this is that the type genericPtr points to is unkown.
+ * This can be fixed with a typecast, as shown below:
+ */
+short *numPrt, result;
+void *genericPtr = numPtr;
+result = ((short) *genericPtr) + 7;
+
+
+f.
+float x = 19.34;
+float xPtr = &x;
+printf("%f\n", xPtr );
+/*
+ * There we are trying to print the value a pointer points to, but we have not
+ * dereferenced the pointer.  Here's what it should look like:
+ */
+float x = 19.34;
+float xPtr = &x;
+printf("%f\n", *xPtr );
+
+
+g.
+char *s;
+printf("%s\n", s );
+/*
+ * The issue is that s does not point to a string yet, because we have not 
+ * allocated and assigned the space for that string.
+ * Also, since it is a string, we must initialize it so it contains a NULL
+ * character.  (We wouldn't want it just printing out every byte in memory
+ * until it happens upon a NULL character.  That would be bad.)
+ * Here's what we can do:
+ */
+char *s;
+s = malloc( 12 );
+printf("%s\n", s );
+
+
+h.
+int funct( int *p ) {
+	int i = -1;
+	int *pp;
+	pp = p + i;
+	return &i;
+}
+
+int main( int argc, char **argv ) {
+	int j = 5;
+	funct1(j);
+}
+
+/*
+ * Well, this function is a little confusing.  It appears what they are trying
+ * to do is create a copy of the value pointed to by p and add i to that copy.
+ * However, they are instead returning a pointer to a variable which no longer 
+ * exists.  In addition, the value of j is passed into funct1, instead of the 
+ * pointer to j.  Here's how I would fix it:
+ */
+int funct( int p ) {
+	int i = -1;
+	int *pp;
+	pp = malloc( sizof(int) );
+	*pp = p + i;
+	return pp;
+}
+
+int main( int argc, char **argv ) {
+	int j = 5;
+	int *k = funct1(j);
+	return 0;
+}
+
+	
+
+11.2 State whether the following are true or false.  If false, explain why.
+a. Two pointers that point to different arrays cannot be compared meaningfully.
+This is true - the pointers themselves cannot be meaningfully compared.
+However, the values they point to may be compared.
+
+b. Because the name of an array is a pointer to the first element of the array,
+array names may be manipulated in precisely the same manner as pointers.
+This is true - they are pointers like any other.  (In fact, they may even be
+declared in the pointer style)
+
+11.3 For each of the following, write a single statement that performs the
+indicated task.  Assume that hte variables value1 and value2 of type long long
+int have been declared and that value1 has been initialized to 100,000.
+
+a. Declare the variable llptr to be a pointer to an object of type long long
+int.
+long long int llptr;
+
+b. Assign the address of the variable value1 to the pointer variable llptr.
+llptr = &value1;
+
+c. Print the value of the object pointed to by llptr.
+printf("value at llptr = %d\n", *llptr );
+
+
+11.4 Use the function malloc() to do the following:
+a. For the integer pointer p, allocate memory for a 10-element array.  Fill
+each element with the value of 5, then free it from memory.
+p = malloc( sizof(int) * 10 );
+for( int i = 0; i < 10; ++i ) {
+	p[i] = 5;
+}
+free( p );
+
+b. Suppose the variable str is declared as a pointer to a char, allocate enough
+memory to store the string "This string".
+str = malloc( sizof( char ) * 12 );
+
+
+11.8 What does this program do?
+#include <stdio.h>
+void mystery1( char *, const char * );
+int main( int argc, char **argv ) {
+	char string1[80], string2[80];
+
+	printf("Enter two strings: ");
+	scanf("%s%s", string1, string2 );
+	mystery1( string1, string2 );
+	printf("%s", string1 );
+	return 0;
+}
+
+void mystery1( char *s1, const char *s2 ) {
+	/* makes s1 pointing to the end of string s1 */
+	while( *s1 != '\0' ) {
+		++s1;
+	}
+	while( *s1 = *s2 ) {
+		s1++;
+		s2++;
+	}
+}
+
+This program takes two lines entered by the user, and stuffs them into one.
+For example, if the user enters "Hello\nWorld\n", s1 becomes "HelloWorld".
+
+
+11.9 What does this program do?
+
+#include <stdio.h>
+
+int mystery2( const char * );
+
+int main( int argc, char **argv ) {
+	char string[80];
+
+	printf("Enter a string: ");
+	scanf("%s", string );
+	printf("%d\n", mystery2( string ) );
+	return 0;
+}
+
+int myster2 ( const char *s ) {
+	int x;
+	for( x = 0; *s != '\0'; s++ ) {
+		++x;
+	}
+	return x;
+}
+
+This program asks the user for a string, and then prints out the length of that
+string.
+
+
+11.21 If the array is defined as a[3][5], which of the following expressions
+are equievelent to a[j][k]?
+
+(a) *(a[j] + k)					YES
+(b) **(a[j + k] )				NO
+(c) *(*(a+j) + k )				YES
+(d) **(a + j) + k				NO
+(e) *(&a[0][0] + j*5 + k ) 		YES
+(f) **a+j+k						NO
+(g) *(&a[j] + k)				NO
+(h) *((int *)a[j] + k)			YES
+(i) *((int *)(a) + j*5+k)		YES
+(j) *((int *)(a + j) + k)		YES
+(k) *(a + j * 5 + k )			NO
+(l) *((int *)(a) + j * 5 + k )	YES
+(m) *((int *)(a) + j + k )		NO
+(n) *((int *)(a) + 2*j + k )	NO
+(o) *(&a[0][0] + 4*j + k )		NO
+(p) *(a + 4 * j + k )			NO
+(q) *(&a[0][0] + 6*j + k )		NO
+
+
+
+Testing a short-circuit:
+#include <stdio.h>
+
+int test( char value; int iterations ) {
+	int initial_time = time();
+	char junk;
+	for( int i = 0; i < iterations; ++i ) {
+		junk = (value || (rand % 2) );
+	}
+	int end_time = time();
+	return (end_time - initial_time);
+}
+
+
+int main( int argc, char **argv ) {
+	printf("This function tests the short-circuiting of the logical");
+	printf(" OR operator.\n");
+	int interations;
+	printf("How many iterations should we test? ");
+	scanf("%d", &iterations );
+
+	int short_circuit = test( 1, iterations );
+	printf("Short-circuited loop took %d seconds.\n", short_circuit );
+	
+	int full_evaluation = test( 0, iterations );
+	printf("Full evaluation loop took %d seconds.\n", full_evaluation );
+
+	return 0;
+}
+

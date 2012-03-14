@@ -1,0 +1,37 @@
+Marshal Horn
+Prelab for Lab 7
+CS 151
+
+
+1. In the statement below, does A get the value of X, or does X get the 
+value of A?
+X=A;
+X gets the value of A.
+
+2. If there are switches on port B and LEDs on port D, give the commands to:
+a.) Read from the switches on port B and write them to port D.
+PORTD = PINB;
+
+b.) Copy the value of the most for significant bits on the switches on
+port B to the 4 most significant bits of port D without changing the value
+of port D's lower 4 bits.
+
+char temp = PINB & 0xf0;
+temp |= PIND & 0x0f;
+PORTD = temp;
+
+3. What value in binary should PORTB have assigned to it to display ambeer
+LEDs?
+PORTB = 0xc0;
+
+4. In your own words decribe the meaning of the term 'persistence of vision'.
+Persistence of vision refers to the length of time an image stays in our
+vision.  Like a camera, our eyes have a sort of exposure period - if a beam of
+light crosses our vision quickly enough, we see a streak of light instead of
+an individual dot.  This effect can be used to display an image over an area
+without every point being illuminated at the same time.  For example, on our
+Wunderboards, we can only illuminate one row at a time.  So, to display an
+image on the whole 8x8 grid, we must cycle through the rows (going over each
+row at least 10 times per second), and our eyes will store the image long
+enough for us to process what is being displayed.
+

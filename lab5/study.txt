@@ -1,0 +1,52 @@
+Marshal Horn
+Study questions for lab 5
+
+
+1.
+
+/* This is bad code, as it has multiple returns. */
+int what_do_i_return(int x){
+	int i;
+	if(x <= 1){
+		return -2;
+	}
+	for(i = 1; i < 100; i++){
+		if(i % 2 == 0 && i % 5 == 0 && i % x == 0){
+			return i;
+		}
+	}
+	return -1;
+}
+
+
+
+If x is less than 3, then it returns -2 ( line 9 )
+Otherwise, if the least common multiple of x and 10 is less than 100, then then this
+function will return that LCM (line 13).
+Otherwise, this function will return -1 (line 16).
+
+
+2.
+	int print = what_do_i_return( rand()%11 );
+	printf("This function returned %d", print );
+
+3.
+int what_do_i_return( int x ) {
+	int i;
+	int return_value = -1;
+
+	if( x <= 1 ) {
+		return_value -2;
+	}
+
+	for( i = 10; i < 100; i+=10 ) {
+		if( i % x == 0  ) {
+			return_value = i;
+			break;
+		}
+	}
+
+	return return_value;
+}
+
+

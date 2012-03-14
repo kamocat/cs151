@@ -83,8 +83,8 @@ void count_between( int input1, int input2 ) {
 char quit_or_rerun( ) {
 	printf("Rerun the program? \n");
 	char c;
-	scanf("%c", &c );
-	flushall();	// flush the scan buffer
+	/* Scan twice to flush '\n' */
+	scanf("%c%c", &c, &c );
 	return !( ( c == 'q' ) || ( c == 'n' ) ||
 			( c == 'Q' ) || ( c == 'N' ) );
 }

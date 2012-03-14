@@ -1,0 +1,34 @@
+Marshal Horn
+Prelab for Lab 6
+
+1.
+What is port A for?
+Port A is for the switches (both momentary and slider).
+
+What is port C for?
+Port C is for the row of the the LED display.  It is multiplexed using port E.
+
+What is port E for?
+Port E is the index for multiplexing port C.  It is the binary representation
+of the column of the LED array.
+
+
+
+2.
+-(0b11000101) = -0xc5 = -209
+  0b00100001  =  0x21 =   33
+  0b10111101  =  0xbd =  189
+
+
+3.
+
+char	hex		decimal		binary
+'A'		0x41		65		0b01000001
+'a'		0x61		97		0b01100001
+'0'		0x30		48		0b00110000
+'9'		0x39		57		0b00111001
+'z'		0x7a		122		0b01111001
+'Z'		0x5a		90		0b01011010
+
+
+

@@ -1,0 +1,201 @@
+Marshal Horn, Lab 10
+
+1.
+	/*
+	 * This is a comment in C
+	 * It can span multiple lines
+	 */
+
+2.
+	Opening a file in vi is done by typing navigating to the directory and 
+	typing "vim filename" 
+	It can be saved with the vim command :w
+	The command :q will quit vim.
+
+3. Excercise 3.1
+	Write the octal, decimal, and hexadecimal equivelents of the following
+	binary numbers:
+	a) 0b00110011, 063, 51, 0x33
+	b) 0b01101100, 0154, 108, 0x6c
+	c) 0b01110111, 0167, 119, 0x77
+	d) 0b00111101, 075, 61, 0x3d
+	e) 0b11111011, 0373, -5, 0xfb
+	f) 0b11111111, 0377, -1, 0xff
+	g) 0b00100010001011010, 042132, 17524, 0x445a
+	h) 0b10100010001011010, 0242132, -48038, 0x1445a
+
+4. Excercise 3.5
+	a) printf("%s\n", 'Happy Birthday');
+	Because 'Happy Birthday' is used as a string, not a char array, it
+	should be surrounded by quotes (") instead of single-quotes (').
+	
+	b) printf("\%c\n", 'Hello');
+	The % character should not be escaped here.
+
+	c) printf('Enter your name: ');
+	The text should be in quotes, not single-quotes.
+
+	d) The following statement should print "Good bye" (including quotes)
+	printf(""%s"", "Good bye");
+	The inner quotes should be escaped, as /".  Also, the second inner
+	quote should be moved to be BEFORE the new line character.
+
+	e) char c = 'a';
+	   prinft("%s\n", c);
+	This program uses a string format specifier (%s) where a char format
+	specifier (%c) should be used.
+
+	f) printf('Enter your name: ');
+	Quotes should be used instead of single-quotes here.
+
+	g) printf( %f, 123.456);
+	The format specifier should be in quotes.
+
+	h) The following statement should print the character 'O' and 'K' 
+	   (excluding the quotes):
+	   printf("%s%s\n", 'O', 'K');
+	The character format specifier (%c) should be used here instead of the
+	string format specifier (%s).
+
+	i) char c;
+	   scanf("%c", c);
+	The pointer of c (&c) should be provided instead of the value of c (c).
+
+	j) double d;
+	   scanf("%f", &d);
+	   printf("%f", d);
+	The scanf should use the double format specifier (%lf), not the float
+	format specifier (%f).
+
+	k) int d;
+	   scanf("%f", &d);
+	   printf("%f", d);
+	printf and scanf should use the int format specifier (%d), not the
+	float format specifier (%f).
+
+	l) The following statement should print out 123.456780
+	   double x = 123.45678, y;
+	   int d;
+	   d = x;
+	   y = d;
+	   printf("%f\n", y);
+	The variable d is an integer, meaning all information after the 
+	decimal will be lost.  Also, the float format specifier (%f) will 
+	cast the value from y to a float, meaning only 7 digits of precision.
+	In order to display the trailing zero, the format specifier %f.6 should
+	be used.  (This displays 6 digits after the decimal point)
+
+5. Excercise 3.6
+	Using the %f specifier with printf only prints 7 decimals.  The remaining
+	are truncated.
+
+6. Excercise 3.17
+	What are the minimum and maximum and values for an integer with n bits in
+	signed representation?  What is the maximum value for an integer with n
+	bits in unsigned representation?  Express these values in both decimal and
+	binary representation.  For a negative value in binary, use binary two's
+	complement representation.
+
+	a) n is 8
+	maximum is 127 (0b01111111)
+	minimum is -128 (0b10000000)
+
+	b) n is 16
+	maximum is 32767 (0b0111111111111111)
+	minimum is -32768 (0b1000000000000000)
+
+	c) n is 32
+	maximum is 2147483647 (0b01111111111111111111111111111111)
+	minimum is -2147483648 (0b10000000000000000000000000000000)
+
+	d) n is 6
+	maximum is 31 (0b011111)
+	minimum is -32 (0b100000)
+
+	e) n is 10
+	maximum is 511 (0b0111111111)
+	minimum is -512 (0b1000000000)
+
+7. Excercise 4.1
+	a) C operators are evalutated left to right
+	This is FALSE, because operators like =, <<, and >> are evaluated right to left
+
+	b) The expression (x<5 || a>b==1) is true only if both x<5 and a>b are true.
+	FALSE.  It's x<5 OR a>b.
+
+8. Excercise 4.12
+	For the following matehmatical expressions, write their corresponding C
+	expressions.  You may add proper parentheses to avoid any confusion.
+
+	a) (x+4)/(y+5)
+	b) 9 + 5*(x+4)/(y+5)
+	c) r*r*r*3.14*4/3
+	d) x < y
+	e) (x >= y) && (y <= z)
+	f) (x >= y) && (x >= 0)
+	g) (x <= 1) || (x > 20)
+	h) (1 < x) && (x <= 20)
+	i) ((1 < x) && (x <= 20)) || ((3 >= y) || (y >= 1))
+
+9. Excercise 5.3
+	Identify and correct the errors in each of the following code blocks. (Note: there
+	may be more than one error.)
+	a) if(age >= 65){
+		printf("Age is greater than or equal to 65\n");
+	   }else {
+	   	printf("Age is less than 65\n");
+	   }
+	
+	b) if(i == 2){
+		printf("i is 2\n");
+	   }else {
+	   	printf("i is not equal to 2\n");
+	   }
+
+	c) The following code should output the odd integers from 999 to 1:
+	for( x = 999; x >= 1; x -=2){
+		printf("%d\n", n);
+	}
+
+	d) The following code should output the even integers from 2 to 100:
+	counter = 0;
+	Do {
+		counter += 2;
+		printf("%d\n", counter);
+	} while(counter < 100);
+
+	e) The following code should sum hte integers from 100 to 150:
+	total = 0;
+	for(x = 100; x <= 150; ++x;){
+		total += x;
+	}
+
+
+/*
+ *Pseudocode for excercise 5.11
+ */
+ 
+Read command-line argument
+If invalid
+	print instructions for useage
+Else
+	convert argument to integer
+	until (number of iterations is reached)
+		print next value of fibbonacci
+END.
+
+
+/*
+ * Pseudocode for excercise 5.19
+ */
+
+Loop (until broken)
+	Prompt user for integer
+	If input is -1, break.
+	Check if integer is between 0 and 255 (range of char)
+	If it is out of that range, throw out that value and ask again. (continue)
+	cast integer to char
+	print char back to user
+
+
+
