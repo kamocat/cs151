@@ -35,6 +35,7 @@
 #define OVERWRITE_STUDENT -310
 #define OVERWRITE_ASSIGNMENT -210
 #define BAD_INPUT -9000
+#define END_OF_LIST -321
 
 /*
  * Struct declarations
@@ -281,19 +282,24 @@ struct node* get_last( struct node *head ) {
 int search_for_element( struct node *start, char *last, char *first,
 		struct node **address, struct node **preceding ) {
 	/* 
-	 * We initialize to not found in case the search goes through hte whole
-	 * array without finding the name we're looking for.
+	 * We initialize to END_OF_LIST in case the search goes through the 
+	 * whole array without finding the name we're looking for.
+	 * If this is the case, we catch it and set preceding to the last
+	 * element, and address to NULL.
 	 */
-	int error = STUDENT_NOT_FOUND;
-	/*
+	int error = END_OF_LIST;
 
 	while( (start->next) != NULL ) {
 		int eval = strcmp( last, start->last_name );
 		if( eval > 0 ) {
+			printf("%s was found.  Checking next student.\n",
+					start->last_name );
 			start = start->next;
 
 		} else if ( eval < 0 ) {
-			// Student not found
+			// Student not found.
+			printf("Student was not found.\n");
+			error = STUDENT_NOT_FOUND;
 			break;
 
 		} else if( eval == 0 ) {
@@ -306,6 +312,7 @@ int search_for_element( struct node *start, char *last, char *first,
 					continue; //skip back to start of loop
 				} else if ( eval < 0 ) {
 					// Student not found
+					error = STUDENT_NOT_FOUND;
 					break;
 				}
 				// ELSE continue to below
@@ -313,14 +320,23 @@ int search_for_element( struct node *start, char *last, char *first,
 
 			// Match was found
 			error = 0;
-			*address = start;
-			*preceding = start->previous;
 			break;
 		}
 	}
-	*/
-	*address = start;
-	*preceding = start->previous;
+
+	/* Update the address and preceding */
+	if( error == END_OF_LIST ) {
+		/* 
+		 * If this element is to be inserted, it should be placed at the
+		 * end of the list to maintain alphebetical order.
+		 */
+		*preceding = start;	// now the last element in the list
+		*address = NULL;	// there is no element that follows the last
+	} else {
+		*address = start;
+		*preceding = start->previous;
+	}
+
 	return error;
 }
 
@@ -373,7 +389,7 @@ struct node* print_list( struct node *element, int n ) {
 	 * We use != here intead of < so that the user can pass in -1 if they want to
 	 * print the entire list.
 	 */
-	printf("Printing gradebook...\n");
+	printf("\n****Printing gradebook****\n");
 	for( int i = 0; i != n; ++i ) {
 		print_student( element );
 		if( element->next != NULL ) {
