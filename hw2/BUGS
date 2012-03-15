@@ -4,6 +4,7 @@ deduced by the looking at the git history, and the importance is described
 in the description
 
 
+FIXED: was trying to stitch elements to NULL
 Seg fault after second person is entered.
 (perhaps related to the search function)
 

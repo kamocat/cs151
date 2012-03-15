@@ -285,6 +285,7 @@ int search_for_element( struct node *start, char *last, char *first,
 	 * array without finding the name we're looking for.
 	 */
 	int error = STUDENT_NOT_FOUND;
+	/*
 
 	while( (start->next) != NULL ) {
 		int eval = strcmp( last, start->last_name );
@@ -292,31 +293,34 @@ int search_for_element( struct node *start, char *last, char *first,
 			start = start->next;
 
 		} else if ( eval < 0 ) {
-			/* Student not found */
+			// Student not found
 			break;
 
 		} else if( eval == 0 ) {
 			if( first != NULL ) {
 
-				/* only search for first name if one was passed in */
+				// only search for first name if one was passed in
 	  			eval = strcmp( first, start->first_name );
 				if( eval > 0 ){
 					start = start->next;
 					continue; //skip back to start of loop
 				} else if ( eval < 0 ) {
-					/* Student not found */
+					// Student not found
 					break;
 				}
-				/* ELSE continue to below */
+				// ELSE continue to below
 			}
 
-			/* Match was found */
+			// Match was found
 			error = 0;
 			*address = start;
 			*preceding = start->previous;
 			break;
 		}
 	}
+	*/
+	*address = start;
+	*preceding = start->previous;
 	return error;
 }
 
@@ -369,6 +373,7 @@ struct node* print_list( struct node *element, int n ) {
 	 * We use != here intead of < so that the user can pass in -1 if they want to
 	 * print the entire list.
 	 */
+	printf("Printing gradebook...\n");
 	for( int i = 0; i != n; ++i ) {
 		print_student( element );
 		if( element->next != NULL ) {
@@ -563,18 +568,25 @@ int insert_student( struct node **head, char *first, char *last,
 		struct assignment *grades, int number_of_assignments ) {
 
 	int error = 0;
+	// printf("allocating struct...\n");
 	struct node *new = malloc(sizeof(struct node) );
+	// printf("copying first name...\n");
 	copy_string( &(new->first_name), first );
+	// printf("copying last name...\n");
 	copy_string( &(new->last_name), last );
+	// printf("copying gradebook...\n");
 	new->grades = grades;	// array is already created - use it.
+	// printf("copying number of assignments...\n");
 	new->num_assignments = number_of_assignments;
 
 
+	printf("Searching the list...\n");
 	if( *head == NULL ) {
 		/*
 		 * Array is empty.
 		 * This will be the first element.
 		 */
+		printf("This is the first element in the list.\n");
 		*head = new;
 		new->next = NULL;
 		new->previous = NULL;
@@ -584,8 +596,17 @@ int insert_student( struct node **head, char *first, char *last,
 		 * This is good - it means the entry for the student doesn't
 		 * already exist.  So, now we can link it in.
 		 */
-		new->next->previous = new;
-		new->previous->next = new;
+		printf("Spot was found between %lld and %lld.\n",
+				(long long)(new->previous), (long long)(new->next) );
+		// printf("Patching previous...\n");
+		if( new->next != NULL ) {
+			new->next->previous = new;
+		}
+		// printf("Patching next...\n");
+		if( new->previous != NULL ) {
+			new->previous->next = new;
+		}
+		printf("Resetting head...\n");
 		*head = get_first( *head );
 
 	} else {
@@ -593,6 +614,7 @@ int insert_student( struct node **head, char *first, char *last,
 		 * The element already exists.
 		 * Print warning to user, and don't create element.
 		 */
+		printf("Student already exists.  Deleting entry...\n");
 		release_student( new );
 		error = OVERWRITE_STUDENT;
 	}
