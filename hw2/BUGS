@@ -1,0 +1,11 @@
+This file describes current bugs in the program.
+It does not give dates or people or importance - date and person can be
+deduced by the looking at the git history, and the importance is described
+in the description
+
+
+Seg fault after second person is entered.
+(perhaps related to the search function)
+
+
+Doesn't accept the assignment input

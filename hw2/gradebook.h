@@ -36,7 +36,6 @@
 #define OVERWRITE_ASSIGNMENT -210
 #define BAD_INPUT -9000
 
-
 /*
  * Struct declarations
  */
@@ -65,9 +64,17 @@ struct stats{
 /*
  * Create a new space and copy a string over
  */
-void copy_string( char **target, char *source ) {
-	*target = (char *)malloc( strlen(source) );
-	strcpy( *target, source);
+int copy_string( char **target, char *source ) {
+	int length = strlen( source ) + 1;
+	int error = 0;
+	if( (source != NULL ) && ( length > 1) ) {
+		*target = (char *)malloc( length );
+		strcpy( *target, source);
+	} else {
+		error = BAD_INPUT;
+	}
+	return error;
+
 }
 
 /*
@@ -174,6 +181,26 @@ int get_length( struct node *head ) {
 	return length;
 }
 
+/*
+ * Close gradebook and clear list
+ */
+int close_gradebook( struct node **head ) {
+	*head = get_first( *head );
+	if( head != NULL ) {
+		struct node *next;
+		int n = get_length( *head );
+		for( int i = 0; i < n; ++i ) {
+			next = (*head)->next;
+			release_student( *head );
+			*head = next;
+		}
+	}
+	return 0;
+}
+			
+
+
+
 
 
 /*
@@ -239,7 +266,8 @@ struct node* get_last( struct node *head ) {
  * 		else if ( eval < 0 )
  * 			error = STUDENT_NOT_FOUND
  * 		else if( eval == 0 )
- * 			if( strlen( first ) ) 
+ * 			if( first != NULL )
+ * 				// only search for first name if one was passed in
  *	 			eval = strcmp( first, element->first )
  * `			if( eval != 0 )
  * 					go to next element
@@ -250,20 +278,46 @@ struct node* get_last( struct node *head ) {
  *
  *
  */
-int search_for_element( struct node *head, char *last, char *first,
+int search_for_element( struct node *start, char *last, char *first,
 		struct node **address, struct node **preceding ) {
-	/*
-	 * This function is a stub at the moment.
-	 * It should return values that will work for testing
+	/* 
+	 * We initialize to not found in case the search goes through hte whole
+	 * array without finding the name we're looking for.
 	 */
-	*address = head;
-	*preceding = head->previous;
+	int error = STUDENT_NOT_FOUND;
 
-	/*
-	 * This should return a nonzero value so that the insert feature works.
-	 * We are not concerned with the actual search feature at the moment.
-	 */
-	return STUDENT_NOT_FOUND;
+	while( (start->next) != NULL ) {
+		int eval = strcmp( last, start->last_name );
+		if( eval > 0 ) {
+			start = start->next;
+
+		} else if ( eval < 0 ) {
+			/* Student not found */
+			break;
+
+		} else if( eval == 0 ) {
+			if( first != NULL ) {
+
+				/* only search for first name if one was passed in */
+	  			eval = strcmp( first, start->first_name );
+				if( eval > 0 ){
+					start = start->next;
+					continue; //skip back to start of loop
+				} else if ( eval < 0 ) {
+					/* Student not found */
+					break;
+				}
+				/* ELSE continue to below */
+			}
+
+			/* Match was found */
+			error = 0;
+			*address = start;
+			*preceding = start->previous;
+			break;
+		}
+	}
+	return error;
 }
 
 /*
@@ -311,7 +365,11 @@ void print_student( struct node *element ) {
  * return start
  */
 struct node* print_list( struct node *element, int n ) {
-	for( int i = 0; i < n; ++i ) {
+	/*
+	 * We use != here intead of < so that the user can pass in -1 if they want to
+	 * print the entire list.
+	 */
+	for( int i = 0; i != n; ++i ) {
 		print_student( element );
 		if( element->next != NULL ) {
 			element = element->next;
@@ -423,7 +481,7 @@ struct stats stats_on_assignment( struct node *head, char *assignment ) {
 
 	int length = get_length( head );
 	double *array = (double *)malloc( length * sizeof(double) );
-	double *score;
+	double *score = 0;
 	int error;
 
 	for( int i = 0; i < length; ++i ) {
@@ -606,6 +664,7 @@ int interpret_line( struct node **head, char *line ) {
 						first, last );
 				printf(" assignments, which is capped at %d.\n",
 						MAX_NUM_ASSIGNMENTS );
+				break;
 			}
 
 			/*
@@ -620,6 +679,7 @@ int interpret_line( struct node **head, char *line ) {
 		error = BAD_INPUT;
 	}
 	return error;
+}
 
 
 /*
@@ -649,8 +709,8 @@ void enter_new( struct node **head ) {
 	char *score;
 	char *end;
 	double value;
-	do{
-		fgets( input, MAX_STRING_LENGTH, stdin );
+	fgets( input, MAX_STRING_LENGTH, stdin );
+	while( *input != '\n' ) {
 		score = seperate_string( input );
 		value = strtod( score, &end );
 
@@ -672,7 +732,8 @@ void enter_new( struct node **head ) {
 		 */
 		fprintf(stderr, "That entry was not valid. ");
 		fprintf(stderr, "Please enter in the format assignment, score.\n"); 
-	} while( *input != '\n' );
+		fgets( input, MAX_STRING_LENGTH, stdin );
+	} 
 
 	insert_student( head, last, first, grade_pairs, i );
 
@@ -706,12 +767,13 @@ int read_file( struct node **head, char *filename ) {
 		 * the file
 		 */
 		char storage[MAX_LINE_LENGTH];
+		fgets( storage, MAX_LINE_LENGTH, gradebook );
 
 		/* Make an entry for each student in the file */
-		do{
+		while( storage != NULL ){
+			error = interpret_line( head, storage );
 			fgets( storage, MAX_LINE_LENGTH, gradebook );
-		/* loop until we reach the end of the file */
-		} while( last != NULL );
+		} 
 
 	}
 	return error;
