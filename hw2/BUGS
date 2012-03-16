@@ -20,3 +20,6 @@ about it reading multiple strings from the same line.
 FIXED: now handles the search properly, including if the item should go at
 the beginning or end of the list.  First and last names are no longer 
 switched.  However, it does not yet turn all to lower case.
+
+
+Seg fault when I try to add a student.  Will investigate later.

@@ -38,6 +38,43 @@
 #define BAD_INPUT -9000
 #define END_OF_LIST -321
 
+/* Define useage */
+#define GRADEBOOK_USEAGE This gradebook takes input in the form command \
+argument.\nThese are the valid commands:\n\
+add Last_name,First_name,{,[Assignment,score]*}\n\
+\tAdds a student to the list\n\
+getn n\n\
+\tGets the nth student from the list\n\
+get0\n\
+\tGets the first student from the list\n\
+getend\n\
+\tGets the last student from the list\n\
+rm\n\
+\tDeletes the current student\n\
+getf First_name\n\
+\tFinds a student by first name\n\
+getl Last_name,First_name\n\
+\tFinds a student by last name (first name is optional)\n\
+ls\n\
+\tPrints all the students in the list\n\
+import\n\
+\tLoads a gradebook from file.  The first line should contain the number\n\
+\tof students and the number of grades per student.  Each line after\n\
+\tshould contain student data in the same format as when adding them\n\
+\tindividually with add.\n\
+gradepointer\n\
+\tPrints the address of the assignment array of the current student\n\
+stat\n\
+\tPrints the mean, median, and standard deviation of the current \n\
+\tstudents grades.\n\
+allstat assignment_name\n\
+\tPrints the mean, median, and standard deviation of all students grades\n\
+\ton the specified assignment.  If the assignment is not found, that\n\
+\tstudents grade is translated as zero.\n\
+quit\n\
+\tExit the program\n\n
+
+
 /*
  * Struct declarations
  */
@@ -574,7 +611,6 @@ struct stats stats_on_individual( struct node *student ){
 struct node *insert_student( struct node **head, char *last, char *first,
 		struct assignment *grades, int number_of_assignments ) {
 
-	int error = 0;
 	// printf("allocating struct...\n");
 	struct node *new = malloc(sizeof(struct node) );
 	// printf("copying first name...\n");
@@ -623,7 +659,6 @@ struct node *insert_student( struct node **head, char *last, char *first,
 		 */
 		printf("Student already exists.  Deleting entry...\n");
 		release_student( new );
-		error = OVERWRITE_STUDENT;
 	}
 		
 	return new;
@@ -658,7 +693,6 @@ char * seperate_string( char *string ) {
  */
 
 struct node *interpret_line( struct node **head, char *line ) {
-	int error = 0; //start with no error
 	char *last;
 	char *first;
 	char *score;
@@ -711,9 +745,8 @@ struct node *interpret_line( struct node **head, char *line ) {
 		/* loop until we've reached the end of the line */
 		} while( *line != '\0' ); 
 		new = insert_student( head, last, first, grade_pairs, i );
-		error = 0;
 	} else {
-		error = BAD_INPUT;
+		/* Bad input */
 	}
 	return new;
 }
@@ -729,12 +762,12 @@ struct node *enter_new( struct node **head ) {
 	fgets( last, MAX_STRING_LENGTH, stdin );
 
 	// use this so that it uses the same code as read from file.
-	int error = interpret_line( head, last );
+	struct node *new = interpret_line( head, last );
 
-	if( error ) {
+	if( new == NULL ) {
 		fprintf( stderr, "That was not entered correctly.\n");
 	}
-
+	return new;
 }
 		
 
@@ -769,7 +802,9 @@ int read_file( struct node **head, char *filename ) {
 
 		/* Make an entry for each student in the file */
 		while( storage != NULL ){
-			error = interpret_line( head, storage );
+			if( interpret_line( head, storage ) == NULL ) {
+				error = BAD_INPUT;
+			}
 			fgets( storage, MAX_LINE_LENGTH, gradebook );
 		} 
 
