@@ -288,12 +288,14 @@ int search_for_element( struct node *start, char *last, char *first,
 	 * element, and address to NULL.
 	 */
 	int error = END_OF_LIST;
+	*preceding = start == NULL ? NULL : start->previous;
 
-	while( (start->next) != NULL ) {
+	while( start != NULL ) {
 		int eval = strcmp( last, start->last_name );
 		if( eval > 0 ) {
 			printf("%s was found.  Checking next student.\n",
 					start->last_name );
+			*preceding = start;
 			start = start->next;
 
 		} else if ( eval < 0 ) {
@@ -324,18 +326,7 @@ int search_for_element( struct node *start, char *last, char *first,
 		}
 	}
 
-	/* Update the address and preceding */
-	if( error == END_OF_LIST ) {
-		/* 
-		 * If this element is to be inserted, it should be placed at the
-		 * end of the list to maintain alphebetical order.
-		 */
-		*preceding = start;	// now the last element in the list
-		*address = NULL;	// there is no element that follows the last
-	} else {
-		*address = start;
-		*preceding = start->previous;
-	}
+	*address = start;
 
 	return error;
 }
@@ -364,9 +355,8 @@ int search_for_first_name( struct node *head, char *first,
  * Print a single element
  */
 void print_student( struct node *element ) {
-	printf("%s, %s\n", element->last_name, element->first_name );
-	printf("There are %lld assignments for this student.\n",
-			element->num_assignments );
+	printf("Student %s, %s has %lld assignments.\n", element->last_name, 
+			element->first_name, element->num_assignments );
 }
 
 /*
@@ -580,7 +570,7 @@ struct stats stats_on_individual( struct node *student ){
  * Fix the next element to point to this one as previous
  * Update head pointer
  */
-int insert_student( struct node **head, char *first, char *last,
+int insert_student( struct node **head, char *last, char *first,
 		struct assignment *grades, int number_of_assignments ) {
 
 	int error = 0;
@@ -596,13 +586,13 @@ int insert_student( struct node **head, char *first, char *last,
 	new->num_assignments = number_of_assignments;
 
 
-	printf("Searching the list...\n");
+	// printf("Searching the list...\n");
 	if( *head == NULL ) {
 		/*
 		 * Array is empty.
 		 * This will be the first element.
 		 */
-		printf("This is the first element in the list.\n");
+		// printf("This is the first element in the list.\n");
 		*head = new;
 		new->next = NULL;
 		new->previous = NULL;
@@ -612,8 +602,8 @@ int insert_student( struct node **head, char *first, char *last,
 		 * This is good - it means the entry for the student doesn't
 		 * already exist.  So, now we can link it in.
 		 */
-		printf("Spot was found between %lld and %lld.\n",
-				(long long)(new->previous), (long long)(new->next) );
+		// printf("place was found between %lld and %lld.\n",
+				// (long long)(new->previous), (long long)(new->next) );
 		// printf("Patching previous...\n");
 		if( new->next != NULL ) {
 			new->next->previous = new;
@@ -622,7 +612,7 @@ int insert_student( struct node **head, char *first, char *last,
 		if( new->previous != NULL ) {
 			new->previous->next = new;
 		}
-		printf("Resetting head...\n");
+		// printf("Resetting head...\n");
 		*head = get_first( *head );
 
 	} else {

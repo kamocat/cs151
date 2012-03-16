@@ -4,7 +4,7 @@ deduced by the looking at the git history, and the importance is described
 in the description
 
 
-FIXED: was trying to stitch elements to NULL
+FIXED: was trying to stitch elements to NULL (when list was empty)
 Seg fault after second person is entered.
 (perhaps related to the search function)
 
@@ -17,7 +17,6 @@ the input.  If it were using scanf, then we would have to worry
 about it reading multiple strings from the same line.
 
 
-Search isn't returning correctly
-It now doesn't cause a memory leak, but I still think it's not returning
-the correct location.  First and last names are being switched somewhere
-during the add student process.
+FIXED: now handles the search properly, including if the item should go at
+the beginning or end of the list.  First and last names are no longer 
+switched.  However, it does not yet turn all to lower case.
