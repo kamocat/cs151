@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <ctype.h>	// for tolower()
 
 
 #ifndef HORNM_GRADEBOOK_FOR_CS151
@@ -376,8 +377,8 @@ void print_student( struct node *element ) {
  */
 struct node* print_list( struct node *element, int n ) {
 	/*
-	 * We use != here intead of < so that the user can pass in -1 if they want to
-	 * print the entire list.
+	 * We use != here intead of < so that the user can pass in -1 if they 
+	 * want to print the entire list.
 	 */
 	printf("\n****Printing gradebook****\n");
 	for( int i = 0; i != n; ++i ) {
@@ -570,7 +571,7 @@ struct stats stats_on_individual( struct node *student ){
  * Fix the next element to point to this one as previous
  * Update head pointer
  */
-int insert_student( struct node **head, char *last, char *first,
+struct node *insert_student( struct node **head, char *last, char *first,
 		struct assignment *grades, int number_of_assignments ) {
 
 	int error = 0;
@@ -625,7 +626,7 @@ int insert_student( struct node **head, char *last, char *first,
 		error = OVERWRITE_STUDENT;
 	}
 		
-	return error;
+	return new;
 }
 
 
@@ -656,7 +657,7 @@ char * seperate_string( char *string ) {
  * This will stop at the first newline or null character.
  */
 
-int interpret_line( struct node **head, char *line ) {
+struct node *interpret_line( struct node **head, char *line ) {
 	int error = 0; //start with no error
 	char *last;
 	char *first;
@@ -665,6 +666,7 @@ int interpret_line( struct node **head, char *line ) {
 	double value;
 	int i = 0;
 	struct assignment *grade_pairs;
+	struct node *new = NULL;
 	
 	// Strip the newline off of the end
 	char *tmp = strchr( line, '\n' );
@@ -708,18 +710,20 @@ int interpret_line( struct node **head, char *line ) {
 			line = seperate_string( end );
 		/* loop until we've reached the end of the line */
 		} while( *line != '\0' ); 
-		error = insert_student( head, last, first, grade_pairs, i );
+		new = insert_student( head, last, first, grade_pairs, i );
+		error = 0;
 	} else {
 		error = BAD_INPUT;
 	}
-	return error;
+	return new;
 }
+
 
 
 /*
  * Allow user to manually add a new student (instead of from a new file)
  */
-void enter_new( struct node **head ) {
+struct node *enter_new( struct node **head ) {
 	char last[MAX_STRING_LENGTH];
 	printf("\nPlease enter a new student:\n");
 	fgets( last, MAX_STRING_LENGTH, stdin );
@@ -730,59 +734,6 @@ void enter_new( struct node **head ) {
 	if( error ) {
 		fprintf( stderr, "That was not entered correctly.\n");
 	}
-
-
-	/********** Comment out code: *****************
-	
-	char * first;
-
-	// Strip the newline off of the end
-	char *tmp = strchr( last, '\n' );
-	*tmp = '\0';
-
-	first = seperate_string( last );
-
-
-	printf("Now enter up to 100 assignment grade pairs as");
-	printf(" assignment,grade (fractional)\n");
-	struct assignment *grade_pairs;
-	grade_pairs = (struct assignment *)malloc( sizeof(struct assignment) 
-			* MAX_NUM_ASSIGNMENTS );
-
-	int i = 0;
-	char input[MAX_STRING_LENGTH];
-	char *score;
-	char *end;
-	double value;
-	fgets( input, MAX_STRING_LENGTH, stdin );
-	while( *input != '\n' ) {
-		score = seperate_string( input );
-		value = strtod( score, &end );
-
-		if( score != end ) {
-			copy_string( &(grade_pairs[i].name), input );
-			grade_pairs[i].score = value;
-
-			++i;
-			continue;
-
-		} else if ( *input == '\n' ) {
-			// This means the user is done entering values
-			break;
-		}
-
-		/
-		 * ELSE
-		 * The value entered was not valid.  Tell useage.
-		 *
-		fprintf(stderr, "That entry was not valid. ");
-		fprintf(stderr, "Please enter in the format assignment, score.\n"); 
-		fgets( input, MAX_STRING_LENGTH, stdin );
-	} 
-
-	insert_student( head, last, first, grade_pairs, i );
-
-	************* END commented out code **************/
 
 }
 		
@@ -827,19 +778,77 @@ int read_file( struct node **head, char *filename ) {
 }
 
 
+/*
+ * Get command
+ *
+ * The storage input just provides a space for the input to be stored.
+ */
+void get_command( char **command, char **arguments, char *storage ) {
+	/* Print the prompt, and clear erroneous data */
+	printf("grade>");
+	fflush( stdout );
+	fflush( stdin );
+	fgets( storage, MAX_LINE_LENGTH, stdin );
+
+	/* convert input to lowercase */
+	for( int i = 0; i < strlen(storage); ++i ) {
+		storage[i] = tolower(storage[i]);
+	}
+
+	/* seperate the command from the arguments */
+	*command = storage;
+	*arguments = strchr( *command, ' ' );
+	if( *arguments != NULL ) {
+		**arguments = '\0'; // seperate the string
+		*arguments = &(*arguments[1]);	// point to the next character
+	} else {
+		/* ' ' was not found, so point to the last character */
+		*arguments = strchr( *command, '\0' ); 
+	}
+}
+
+
 
 /*
  * Command chooser
  * This executes a function based on user input
  */
-void command_chooser() {
-	/* Get a line of input from the user */
-	printf("Choose an action: ");
-	char input[MAX_STRING_LENGTH];
-	fgets( input, MAX_STRING_LENGTH, stdin );
+void command_chooser( struct node **head ) {
+	char run = 1;
+	struct node *tmp;	// this stores the return of some functions
+	char storage[MAX_STRING_LENGTH];
+	char *command;
+	char *argument;
 
-	/* Now select the function to execute */
-	// FINISH THIS WHEN YOU'RE NOT SO TIRED
+	while( run ) {
+		/* Get a line of input from the user */
+		get_command( &command, &argument, storage );
+
+		/* Now select the function to execute */
+		if( !strcmp( command, "add" ) ) {
+			tmp = interpret_line( head, argument );
+		} else if( !strcmp( command, "quit" ) ) {
+			run = 0;
+		} else if( !strcmp( command, "stats" ) ) {
+		} else if( !strcmp( command, "getn" ) ) {
+		} else if( !strcmp( command, "get0" ) ) {
+		} else if( !strcmp( command, "getend" ) ) {
+		} else if( !strcmp( command, "rm" ) ) {
+		} else if( !strcmp( command, "len" ) ) {
+		} else if( !strcmp( command, "ls" ) ) {
+		} else if( !strcmp( command, "import" ) ) {
+		} else if( !strcmp( command, "gradepointer" ) ) {
+		} else if( !strcmp( command, "stat" ) ) {
+		} else if( !strcmp( command, "allstat" ) ) {
+		} else { // print useage
+			fprintf( stderr, "GRADEBOOK_USEAGE" );
+		}
+		
+	}
+
+	close_gradebook( head ); 
+	printf("DONE.\n");
+
 	
 }
 
