@@ -9,6 +9,7 @@ Seg fault after second person is entered.
 (perhaps related to the search function)
 
 
+FIXED: Switched to same text interpeter as used for reading gradebook files
 Doesn't accept the assignment input
 (At least, it reports that the input isn't correct.
 Since it uses fgets, this should mean that it isn't processing

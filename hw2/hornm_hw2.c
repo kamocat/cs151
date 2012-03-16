@@ -16,9 +16,8 @@ int main( int argc, char **argv ) {
 
 	for( int i = 0; i < n; ++i ) {
 		enter_new( &head );
-		print_list( head, -1 );
 	}
-
+	print_list( head, -1 );
 	
 
 	close_gradebook( &head );

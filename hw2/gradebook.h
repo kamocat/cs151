@@ -663,6 +663,7 @@ char * seperate_string( char *string ) {
 /*
  * Interpret student from line of text
  * and add student to array
+ * This will stop at the first newline or null character.
  */
 
 int interpret_line( struct node **head, char *line ) {
@@ -674,6 +675,11 @@ int interpret_line( struct node **head, char *line ) {
 	double value;
 	int i = 0;
 	struct assignment *grade_pairs;
+	
+	// Strip the newline off of the end
+	char *tmp = strchr( line, '\n' );
+	*tmp = '\0';
+
 	last = line;
 	first = seperate_string( last );
 	line = seperate_string( first );
@@ -725,11 +731,22 @@ int interpret_line( struct node **head, char *line ) {
  */
 void enter_new( struct node **head ) {
 	char last[MAX_STRING_LENGTH];
-	char * first;
-	printf("Please enter student name as Last, First.\n");
+	printf("\nPlease enter a new student:\n");
 	fgets( last, MAX_STRING_LENGTH, stdin );
+
+	// use this so that it uses the same code as read from file.
+	int error = interpret_line( head, last );
+
+	if( error ) {
+		fprintf( stderr, "That was not entered correctly.\n");
+	}
+
+
+	/********** Comment out code: *****************
 	
-	/* Strip the newline off of the end */
+	char * first;
+
+	// Strip the newline off of the end
 	char *tmp = strchr( last, '\n' );
 	*tmp = '\0';
 
@@ -737,7 +754,7 @@ void enter_new( struct node **head ) {
 
 
 	printf("Now enter up to 100 assignment grade pairs as");
-	printf(" assignment, grade (fractional)\n");
+	printf(" assignment,grade (fractional)\n");
 	struct assignment *grade_pairs;
 	grade_pairs = (struct assignment *)malloc( sizeof(struct assignment) 
 			* MAX_NUM_ASSIGNMENTS );
@@ -760,20 +777,22 @@ void enter_new( struct node **head ) {
 			continue;
 
 		} else if ( *input == '\n' ) {
-			/* This means the user is done entering values */
+			// This means the user is done entering values
 			break;
 		}
 
-		/*
+		/
 		 * ELSE
 		 * The value entered was not valid.  Tell useage.
-		 */
+		 *
 		fprintf(stderr, "That entry was not valid. ");
 		fprintf(stderr, "Please enter in the format assignment, score.\n"); 
 		fgets( input, MAX_STRING_LENGTH, stdin );
 	} 
 
 	insert_student( head, last, first, grade_pairs, i );
+
+	************* END commented out code **************/
 
 }
 		
