@@ -13,6 +13,17 @@ int main( int argc, char **argv ) {
 	/* run the interactive prompt */
 	command_chooser( &head );
 
+	// Troubleshoot the menu
+	/* 
+	char *command;
+	char *arguments;
+	char storage[MAX_LINE_LENGTH];
+	get_command( &command, &arguments, storage );
+	printf("Command: %s\n", command);
+	printf("Arguments: %s\n", arguments);
+	*/
+	
+
 	return 0;
 }
 

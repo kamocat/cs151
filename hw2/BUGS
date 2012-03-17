@@ -22,4 +22,6 @@ the beginning or end of the list.  First and last names are no longer
 switched.  However, it does not yet turn all to lower case.
 
 
-Seg fault when I try to add a student.  Will investigate later.
+Seg fault when I try to add a student. Happening in interpret_line().
+This means it probably has something to do with the grade interpetation,
+not with insert_node().

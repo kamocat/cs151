@@ -39,7 +39,7 @@
 #define END_OF_LIST -321
 
 /* Define useage */
-#define GRADEBOOK_USEAGE This gradebook takes input in the form command \
+#define GRADEBOOK_USEAGE "This gradebook takes input in the form command \
 argument.\nThese are the valid commands:\n\
 add Last_name,First_name,{,[Assignment,score]*}\n\
 \tAdds a student to the list\n\
@@ -72,7 +72,7 @@ allstat assignment_name\n\
 \ton the specified assignment.  If the assignment is not found, that\n\
 \tstudents grade is translated as zero.\n\
 quit\n\
-\tExit the program\n\n
+\tExit the program\n\n"
 
 
 /*
@@ -194,8 +194,10 @@ int get_assignment( struct node *student, char *assignment, double *score ){
  * Return first element in list
  */
 struct node *get_first( struct node *head ) {
-	while( head->previous != NULL ) {
-		head = head->previous;
+	if( head != NULL ) {
+		while( head->previous != NULL ) {
+			head = head->previous;
+		}
 	}
 	return head;
 }
@@ -224,8 +226,8 @@ int get_length( struct node *head ) {
  * Close gradebook and clear list
  */
 int close_gradebook( struct node **head ) {
-	*head = get_first( *head );
 	if( head != NULL ) {
+		*head = get_first( *head );
 		struct node *next;
 		int n = get_length( *head );
 		for( int i = 0; i < n; ++i ) {
@@ -719,7 +721,7 @@ struct node *interpret_line( struct node **head, char *line ) {
 				* MAX_NUM_ASSIGNMENTS );
 		
 		/* store each assignment */
-		do{
+		while( *line != '\0' ){
 			score = seperate_string( line );
 			value = strtod( score, &end );
 
@@ -742,8 +744,7 @@ struct node *interpret_line( struct node **head, char *line ) {
 			 * next assignment
 			 */
 			line = seperate_string( end );
-		/* loop until we've reached the end of the line */
-		} while( *line != '\0' ); 
+		} 
 		new = insert_student( head, last, first, grade_pairs, i );
 	} else {
 		/* Bad input */
@@ -824,6 +825,11 @@ void get_command( char **command, char **arguments, char *storage ) {
 	fflush( stdout );
 	fflush( stdin );
 	fgets( storage, MAX_LINE_LENGTH, stdin );
+	
+	/* Remove the trailing newline character */
+	char *tmp = strchr( storage, '\n' );
+	*tmp = '\0';
+
 
 	/* convert input to lowercase */
 	for( int i = 0; i < strlen(storage); ++i ) {
@@ -835,7 +841,7 @@ void get_command( char **command, char **arguments, char *storage ) {
 	*arguments = strchr( *command, ' ' );
 	if( *arguments != NULL ) {
 		**arguments = '\0'; // seperate the string
-		*arguments = &(*arguments[1]);	// point to the next character
+		*arguments = &((*arguments)[1]);	// point to the next character
 	} else {
 		/* ' ' was not found, so point to the last character */
 		*arguments = strchr( *command, '\0' ); 
@@ -860,10 +866,11 @@ void command_chooser( struct node **head ) {
 		get_command( &command, &argument, storage );
 
 		/* Now select the function to execute */
-		if( !strcmp( command, "add" ) ) {
-			tmp = interpret_line( head, argument );
-		} else if( !strcmp( command, "quit" ) ) {
+		if( !strcmp( command, "quit" ) ) {
 			run = 0;
+			printf("Quitting...\n");
+		} else if( !strcmp( command, "add" ) ) {
+			tmp = interpret_line( head, argument );
 		} else if( !strcmp( command, "stats" ) ) {
 		} else if( !strcmp( command, "getn" ) ) {
 		} else if( !strcmp( command, "get0" ) ) {
@@ -875,8 +882,10 @@ void command_chooser( struct node **head ) {
 		} else if( !strcmp( command, "gradepointer" ) ) {
 		} else if( !strcmp( command, "stat" ) ) {
 		} else if( !strcmp( command, "allstat" ) ) {
+		} else if( !strcmp( command, "echo" ) ) {
+			printf("%s\n", argument);
 		} else { // print useage
-			fprintf( stderr, "GRADEBOOK_USEAGE" );
+			fprintf( stderr, GRADEBOOK_USEAGE );
 		}
 		
 	}
