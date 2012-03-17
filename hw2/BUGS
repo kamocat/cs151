@@ -3,6 +3,16 @@ It does not give dates or people or importance - date and person can be
 deduced by the looking at the git history, and the importance is described
 in the description
 
+AllStat produces a segfault
+
+rm not implemented yet
+
+getl produces a segfault
+
+getf not implemented yet
+
+stat produces many "errors" when run in valgrind
+
 
 FIXED: was trying to stitch elements to NULL (when list was empty)
 Seg fault after second person is entered.
@@ -22,6 +32,7 @@ the beginning or end of the list.  First and last names are no longer
 switched.  However, it does not yet turn all to lower case.
 
 
-Seg fault when I try to add a student. Happening in interpret_line().
-This means it probably has something to do with the grade interpetation,
-not with insert_node().
+FIXED: Adding and importing work properly.
+The issue with interpet_line was that I was trying to delete newline twice. 
+I fixed this by making a function to cut off a string at the first newline 
+(excluding the newline), which catches itself if there is no newline.

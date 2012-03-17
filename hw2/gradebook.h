@@ -261,7 +261,7 @@ int close_gradebook( struct node **head ) {
  *
  * return error
  */
-int get_nth_element( struct node *head, int n, struct node **element ) {
+int getn( struct node *head, int n, struct node **element ) {
 	int error = 0;
 	for( int i = 0; i < n; ++i ) {
 		if( (head->next) != NULL ) {
@@ -285,7 +285,7 @@ int get_nth_element( struct node *head, int n, struct node **element ) {
  *
  * return head
  */
-struct node* get_last( struct node *head ) {
+struct node* getend( struct node *head ) {
 	if( head != NULL ) {
 		while( (head->next) != NULL ) {
 			head = head->next;
@@ -333,14 +333,14 @@ int search_for_element( struct node *start, char *last, char *first,
 	while( start != NULL ) {
 		int eval = strcmp( last, start->last_name );
 		if( eval > 0 ) {
-			printf("%s was found.  Checking next student.\n",
-					start->last_name );
+			// printf("%s was found.  Checking next student.\n",
+					// start->last_name );
 			*preceding = start;
 			start = start->next;
 
 		} else if ( eval < 0 ) {
 			// Student not found.
-			printf("Student was not found.\n");
+			// printf("Student was not found.\n");
 			error = STUDENT_NOT_FOUND;
 			break;
 
@@ -395,7 +395,7 @@ int search_for_first_name( struct node *head, char *first,
  * Print a single element
  */
 void print_student( struct node *element ) {
-	printf("Student %s, %s has %lld assignments.\n", element->last_name, 
+	printf("%s, %s (%lld assignments)\n", element->last_name, 
 			element->first_name, element->num_assignments );
 }
 
@@ -594,6 +594,13 @@ struct stats stats_on_individual( struct node *student ){
 
 
 
+/*
+ * Print the mean, median, and stddev from a stats struct
+ */
+void printstats( struct stats input ) {
+	printf("Mean: %.2f\tMedian: %.2f\tStdDev: %.2f\n",
+			input.mean, input.median, input.stddev );
+}
 
 /*
  * Add a value to the list:
@@ -666,6 +673,16 @@ struct node *insert_student( struct node **head, char *last, char *first,
 	return new;
 }
 
+/*
+ * Strip the newline off the end of a string
+ * If there is no newline, this function does nothing.
+ */
+void strip_newline( char *line ) {
+	char *tmp = strchr( line, '\n' );
+	if( tmp != NULL ) { // only replace if new line exists
+		*tmp = '\0';
+	}
+}
 
 
 /*
@@ -704,10 +721,7 @@ struct node *interpret_line( struct node **head, char *line ) {
 	struct assignment *grade_pairs;
 	struct node *new = NULL;
 	
-	// Strip the newline off of the end
-	char *tmp = strchr( line, '\n' );
-	*tmp = '\0';
-
+	strip_newline( line );
 	last = line;
 	first = seperate_string( last );
 	line = seperate_string( first );
@@ -740,8 +754,7 @@ struct node *interpret_line( struct node **head, char *line ) {
 			}
 
 			/*
-			 * Skip the next comma and go to the
-			 * next assignment
+			 * Skip the next comma and go to the next assignment
 			 */
 			line = seperate_string( end );
 		} 
@@ -796,21 +809,78 @@ int read_file( struct node **head, char *filename ) {
 
 		/*
 		 * Create the variables that will be used to interpret
-		 * the file
+		 * the file. In our product specification, it says that
+		 * the first line should contain the number of students
+		 * and the number of of assignments per student.  This
+		 * feature is not implemented yet.  In fact, I'll probably
+		 * forget about it when I'm testing.  So, the following
+		 * loop goes through every line of the file, quietly
+		 * ignoring every line that is invalid.
 		 */
 		char storage[MAX_LINE_LENGTH];
-		fgets( storage, MAX_LINE_LENGTH, gradebook );
+		int i = 0;
+		struct node *added;
 
 		/* Make an entry for each student in the file */
-		while( storage != NULL ){
-			if( interpret_line( head, storage ) == NULL ) {
-				error = BAD_INPUT;
-			}
-			fgets( storage, MAX_LINE_LENGTH, gradebook );
-		} 
+		while( fgets( storage, MAX_LINE_LENGTH, gradebook ) != NULL ) {
 
+			added = interpret_line( head, storage );
+
+			if( added == NULL ) {
+				error = BAD_INPUT;
+			} else {
+				printf("Imported ");
+				print_student( added );
+				++i;
+			}
+		} 
+		fprintf( stdout, "%d students were added to the gradebook.\n", i );
+		fclose( gradebook );
+
+	} else {
+		fprintf( stderr, "\"%s\" is not a valid file.\n", filename );
 	}
 	return error;
+}
+
+
+
+/*
+ * A wrapper for search_for_element
+ * this takes the head pointer and the name, and
+ * returns a pointer to the student found.
+ */
+struct node *getl( struct node *head, char *name ) {
+	char *first;
+	char *last = name;
+	struct node *got;
+	struct node *junk;
+
+	first = seperate_string( last );
+
+	search_for_element( head, last, first, &got, &junk );
+
+	return got;
+}
+
+
+
+
+/*
+ * Tells if a student has been selected,
+ * and prints a warning message if it has not.
+ */
+char stud_net( struct node *q ) {
+	char ok;
+	if( q != NULL ) {
+		ok = 1;
+	} else {
+		ok = 0;
+		printf("No student is selected. To select a student,");
+		printf(" use one of the following: \n");
+		printf("\tgetl\tgetf\tgetn\tget0\tgetend\n");
+	}
+	return ok;
 }
 
 
@@ -826,10 +896,7 @@ void get_command( char **command, char **arguments, char *storage ) {
 	fflush( stdin );
 	fgets( storage, MAX_LINE_LENGTH, stdin );
 	
-	/* Remove the trailing newline character */
-	char *tmp = strchr( storage, '\n' );
-	*tmp = '\0';
-
+	strip_newline( storage );
 
 	/* convert input to lowercase */
 	for( int i = 0; i < strlen(storage); ++i ) {
@@ -871,17 +938,43 @@ void command_chooser( struct node **head ) {
 			printf("Quitting...\n");
 		} else if( !strcmp( command, "add" ) ) {
 			tmp = interpret_line( head, argument );
-		} else if( !strcmp( command, "stats" ) ) {
+		} else if( !strcmp( command, "getl" ) ) {
+			tmp = getl( *head, argument );
+			print_student( tmp );
+		} else if( !strcmp( command, "getf" ) ) {
 		} else if( !strcmp( command, "getn" ) ) {
+			if( getn( *head, atoi(argument), &tmp ) == 0 ) {
+				print_student( tmp );
+			} else {
+				printf("There are only %d students in this gradebook.\n",
+						get_length( *head ) );
+			}
 		} else if( !strcmp( command, "get0" ) ) {
+			tmp = get_first( *head );
+			print_student( tmp );
 		} else if( !strcmp( command, "getend" ) ) {
+			tmp = getend( *head );
+			print_student( tmp );
 		} else if( !strcmp( command, "rm" ) ) {
 		} else if( !strcmp( command, "len" ) ) {
+			printf("This gradebook contains %d students.\n",
+					get_length( *head ) );
 		} else if( !strcmp( command, "ls" ) ) {
+			print_list( *head , -1 );
 		} else if( !strcmp( command, "import" ) ) {
+			read_file( head, argument );
 		} else if( !strcmp( command, "gradepointer" ) ) {
+			if( stud_net( tmp ) ) {
+				printf("The grade pointer for %s %s is %lld.\n",
+						tmp->first_name, tmp->last_name, 
+						(long long)tmp->grades );
+			}	
 		} else if( !strcmp( command, "stat" ) ) {
+			if( stud_net( tmp ) ) {
+				printstats( stats_on_individual( tmp ) );
+			}
 		} else if( !strcmp( command, "allstat" ) ) {
+			printstats( stats_on_assignment( *head, argument ) );
 		} else if( !strcmp( command, "echo" ) ) {
 			printf("%s\n", argument);
 		} else { // print useage
