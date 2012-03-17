@@ -5,7 +5,6 @@ in the description
 
 AllStat produces a segfault
 
-rm not implemented yet
 
 getl produces a segfault
 FIXED: the search now ignores the first_name if its pointer is NULL

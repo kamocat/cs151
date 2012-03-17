@@ -57,7 +57,7 @@ getl Last_name,First_name\n\
 \tFinds a student by last name (first name is optional)\n\
 ls\n\
 \tPrints all the students in the list\n\
-import\n\
+import filename\n\
 \tLoads a gradebook from file.  The first line should contain the number\n\
 \tof students and the number of grades per student.  Each line after\n\
 \tshould contain student data in the same format as when adding them\n\
@@ -155,6 +155,20 @@ int release_student( struct node *student ) {
 			
 
 
+/*
+ * Remove a student from the list, and release the data
+ */
+void rm( struct node *student ) {
+	if( student != NULL ) {
+		if( student->next != NULL ) {
+			student->next->previous = student->previous;
+		}
+		if( student->previous != NULL ) {
+			student->previous->next = student->next;
+		}
+		release_student( student );
+	}
+}
 
 
 /*
@@ -954,6 +968,7 @@ void command_chooser( struct node **head ) {
 			tmp = getend( *head );
 			print_student( tmp );
 		} else if( !strcmp( command, "rm" ) ) {
+			rm( tmp );
 		} else if( !strcmp( command, "len" ) ) {
 			printf("This gradebook contains %d students.\n",
 					get_length( *head ) );
