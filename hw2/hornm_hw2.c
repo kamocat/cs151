@@ -2,8 +2,14 @@
  * Created by Marshal Horn
  * file: hornm_hw2.c
  *
+ * A gradebook application.
+ * Details can be found at http://web.engr.oregonstate.edu/
+ * cgi-bin/cgiwrap/dmcgrath/classes/12W/cs151/index.cgi?hw=2 
+ *
  * This file just contains main.c - all the subfunctions are included
- * in the headers.
+ * in gradebook.h
+ *
+ *
  */
 #include "gradebook.h"
 
@@ -12,17 +18,6 @@ int main( int argc, char **argv ) {
 
 	/* run the interactive prompt */
 	command_chooser( &head );
-
-	// Troubleshoot the menu
-	/* 
-	char *command;
-	char *arguments;
-	char storage[MAX_LINE_LENGTH];
-	get_command( &command, &arguments, storage );
-	printf("Command: %s\n", command);
-	printf("Arguments: %s\n", arguments);
-	*/
-	
 
 	return 0;
 }
