@@ -2,15 +2,28 @@
 /*
  * Author: Marshal Horn
  *
+ * This is a gradebook library, to fulfill the requirements of
+ * Assignment 3 (aka hw2) for CS151.  In short, this has the following
+ * features:
+ * Add a student to the gradebook
+ * Return the nth student in the list
+ * Return the first student in the list
+ * Return the last student in the list
+ * Remove an arbitrary student in the list.
+ * Search for an arbitrary student by last name (first optional).
+ * Search for an arbitrary student by first name (returns first match)
+ * Print the names in the list
+ * Return the number of students in the list
+ * Import students into the list from a file
+ * Print the address of a student's grade array
+ * Print statistics on a student's grades: mean, median, std deviation
+ * Print statistics on an assignment accross all students: mean, median
+ * 	standard deviation
  *
- * This is a description of how the gradebook will work.
- * Each function is described in the comments, with pseudocode,
- * and the function prototype is immidiately below.
  *
- * The exception is mean, median, and std_dev, whose functions are
- * written as regular c code.
  *
  * The datatypes are copied from an example file of Kevin McGrath
+ * A big thank you to valgrind for helping me find my mistakes.
  *
  *
  */
