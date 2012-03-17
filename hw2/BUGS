@@ -4,6 +4,7 @@ deduced by the looking at the git history, and the importance is described
 in the description
 
 AllStat produces a segfault
+FIXED: was trying to dereference a pointer without allocating space
 
 
 getl produces a segfault
@@ -11,6 +12,8 @@ FIXED: the search now ignores the first_name if its pointer is NULL
 or if the first character is '\0'.
 
 stat produces many "errors" when run in valgrind
+I think this is from using a function inside the parethesis of an if()
+instead of using a variable there.
 
 
 FIXED: was trying to stitch elements to NULL (when list was empty)

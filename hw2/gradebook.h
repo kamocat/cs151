@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <ctype.h>	// for tolower()
+#include <strings.h> // for strcasecmp()
 
 
 #ifndef HORNM_GRADEBOOK_FOR_CS151
@@ -114,16 +114,6 @@ int copy_string( char **target, char *source ) {
 	}
 	return error;
 
-}
-
-
-/*
- * Convert a string to lowercase
- */
-void lowercase( char *string ) {
-	for( int i = 0; i < strlen(string); ++i ) {
-		string[i] = tolower(string[i]);
-	}
 }
 	
 
@@ -282,7 +272,7 @@ struct node* getend( struct node *head ) {
  *
  * Start with the first element
  * While( next_pointer != NULL )
- * 		int eval = strcmp( last, element->last )
+ * 		int eval = strcasecmp( last, element->last )
  * 		if( eval > 0 )
  * 			go to next element
  * 		else if ( eval < 0 )
@@ -290,7 +280,7 @@ struct node* getend( struct node *head ) {
  * 		else if( eval == 0 )
  * 			if( first != NULL )
  * 				// only search for first name if one was passed in
- *	 			eval = strcmp( first, element->first )
+ *	 			eval = strcasecmp( first, element->first )
  * `			if( eval != 0 )
  * 					go to next element
  *
@@ -312,7 +302,7 @@ int search_for_element( struct node *start, char *last, char *first,
 	*preceding = start == NULL ? NULL : start->previous;
 
 	while( start != NULL ) {
-		int eval = strcmp( last, start->last_name );
+		int eval = strcasecmp( last, start->last_name );
 		if( eval > 0 ) {
 			// printf("%s was found.  Checking next student.\n",
 					// start->last_name );
@@ -329,7 +319,7 @@ int search_for_element( struct node *start, char *last, char *first,
 			if( (first != NULL) && (*first != '\0') ) {
 
 				// only search for first name if one was passed in
-	  			eval = strcmp( first, start->first_name );
+	  			eval = strcasecmp( first, start->first_name );
 				if( eval > 0 ){
 					start = start->next;
 					continue; //skip back to start of loop
@@ -367,7 +357,7 @@ int search_for_element( struct node *start, char *last, char *first,
  */
 struct node *getf( struct node *head, char *first ) {
 	while( head != NULL ) {
-		if( strcmp( head->first_name, first ) == 0 ) {
+		if( strcasecmp( head->first_name, first ) == 0 ) {
 			break;
 		} else {
 			head = head->next;
@@ -500,10 +490,11 @@ double std_dev( double *array, int length, double mean ) {
  *
  */
 int get_assignment( struct node *student, char *assignment, double *score ){
+	*score = 0;	// initialize to zero in case not found
 	int error = ASSIGNMENT_NOT_FOUND;
 	struct assignment *grades = student->grades;
 	for( int i = 0; i < (student->num_assignments); ++i ){
-		if( strcmp( grades[i].name, assignment) == 0 ){
+		if( strcasecmp( grades[i].name, assignment) == 0 ){
 			error = 0;
 			*score = grades[i].score;
 			break;
@@ -511,6 +502,22 @@ int get_assignment( struct node *student, char *assignment, double *score ){
 	}
 
 	return error;
+}
+
+
+double print_assignment( struct node *student, char *assignment ) {
+	double score;
+	if( student != NULL ) {
+		int error = get_assignment( student, assignment, &score );
+		if( error ) {
+			printf("%s does not have a grade for %s.\n",
+					student->first_name, assignment );
+		} else {
+			printf("%s %s got %.2f on %s.\n", student->first_name,
+					student->last_name, score, assignment );
+		}
+	}
+	return score;
 }
 		
 
@@ -544,18 +551,17 @@ struct stats stats_on_assignment( struct node *head, char *assignment ) {
 
 	int length = get_length( head );
 	double *array = (double *)malloc( length * sizeof(double) );
-	double *score = 0;
+	double score = 0;
 	int error;
 
 	for( int i = 0; i < length; ++i ) {
-		error = get_assignment( head, assignment, score );
+		error = get_assignment( head, assignment, &score );
 		if( error ) {
-			printf("%s, %s does not have a grade for assignment %s.\n",
-				head->last_name, head->first_name, assignment );
-			array[i] = 0;
-		} else {
-			array[i] = *score;
+			fprintf(stderr, "WARNING:%s %s has no grade for %s.\n",
+					head->first_name, head->last_name, assignment );
 		}
+		array[i] = score;
+		head = head->next;
 	}
 
 	struct stats statistics;
@@ -734,7 +740,6 @@ struct node *interpret_line( struct node **head, char *line ) {
 	struct node *new = NULL;
 	
 	strip_newline( line );
-	lowercase( line );
 	last = line;
 	first = seperate_string( last );
 	line = seperate_string( first );
@@ -909,9 +914,7 @@ void get_command( char **command, char **arguments, char *storage ) {
 	fflush( stdin );
 	fgets( storage, MAX_LINE_LENGTH, stdin );
 	
-	/* strip newline and convert to lowercase */
 	strip_newline( storage );
-	lowercase( storage );
 
 	/* seperate the command from the arguments */
 	*command = storage;
@@ -943,53 +946,57 @@ void command_chooser( struct node **head ) {
 		get_command( &command, &argument, storage );
 
 		/* Now select the function to execute */
-		if( !strcmp( command, "quit" ) ) {
+		if( !strcasecmp( command, "quit" ) ) {
 			run = 0;
 			printf("Quitting...\n");
-		} else if( !strcmp( command, "add" ) ) {
+		} else if( !strcasecmp( command, "add" ) ) {
 			tmp = interpret_line( head, argument );
-		} else if( !strcmp( command, "getl" ) ) {
+		} else if( !strcasecmp( command, "getl" ) ) {
 			tmp = getl( *head, argument );
 			print_student( tmp );
-		} else if( !strcmp( command, "getf" ) ) {
+		} else if( !strcasecmp( command, "getf" ) ) {
 			tmp = getf( *head, argument );
 			print_student( tmp );
-		} else if( !strcmp( command, "getn" ) ) {
+		} else if( !strcasecmp( command, "getn" ) ) {
 			if( getn( *head, atoi(argument), &tmp ) == 0 ) {
 				print_student( tmp );
 			} else {
 				printf("There are only %d students in this gradebook.\n",
 						get_length( *head ) );
 			}
-		} else if( !strcmp( command, "get0" ) ) {
+		} else if( !strcasecmp( command, "get0" ) ) {
 			tmp = get_first( *head );
 			print_student( tmp );
-		} else if( !strcmp( command, "getend" ) ) {
+		} else if( !strcasecmp( command, "getend" ) ) {
 			tmp = getend( *head );
 			print_student( tmp );
-		} else if( !strcmp( command, "rm" ) ) {
+		} else if( !strcasecmp( command, "rm" ) ) {
 			rm( tmp );
-		} else if( !strcmp( command, "len" ) ) {
+		} else if( !strcasecmp( command, "len" ) ) {
 			printf("This gradebook contains %d students.\n",
 					get_length( *head ) );
-		} else if( !strcmp( command, "ls" ) ) {
+		} else if( !strcasecmp( command, "ls" ) ) {
 			print_list( *head , -1 );
-		} else if( !strcmp( command, "import" ) ) {
+		} else if( !strcasecmp( command, "import" ) ) {
 			read_file( head, argument );
-		} else if( !strcmp( command, "gradepointer" ) ) {
+		} else if( !strcasecmp( command, "gradepointer" ) ) {
 			if( stud_net( tmp ) ) {
 				printf("The grade pointer for %s %s is %lld.\n",
 						tmp->first_name, tmp->last_name, 
 						(long long)tmp->grades );
 			}	
-		} else if( !strcmp( command, "stat" ) ) {
+		} else if( !strcasecmp( command, "stat" ) ) {
 			if( stud_net( tmp ) ) {
 				printstats( stats_on_individual( tmp ) );
 			}
-		} else if( !strcmp( command, "allstat" ) ) {
+		} else if( !strcasecmp( command, "allstat" ) ) {
 			printstats( stats_on_assignment( *head, argument ) );
-		} else if( !strcmp( command, "echo" ) ) {
+		} else if( !strcasecmp( command, "echo" ) ) {
 			printf("%s\n", argument);
+		} else if( !strcasecmp( command, "grade" ) ) {
+			if( stud_net( tmp ) ) {
+				print_assignment( tmp, argument );
+			}
 		} else { // print useage
 			fprintf( stderr, GRADEBOOK_USEAGE );
 		}
