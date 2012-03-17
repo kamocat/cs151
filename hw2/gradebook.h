@@ -116,18 +116,16 @@ int copy_string( char **target, char *source ) {
 
 }
 
-/*
- * Copy the grades over, so the list is only as long as we need
- */
-void copy_grades( struct assignment **copy, struct assignment *source,
-		int number_of_grades ) {
-	*copy = (struct assignment *)malloc( number_of_grades 
-			* sizeof(struct assignment) );
 
-	for( int i = 0; i < number_of_grades; ++i ) {
-		*copy[i] = source[i];
+/*
+ * Convert a string to lowercase
+ */
+void lowercase( char *string ) {
+	for( int i = 0; i < strlen(string); ++i ) {
+		string[i] = tolower(string[i]);
 	}
 }
+	
 
 
 /*
@@ -155,37 +153,6 @@ int release_student( struct node *student ) {
 	return 0;
 }
 			
-
-
-
-/*
- * get assignment grade
- *
- * int error = ASIGNMENT_NOT_FOUND
- * grades = student->assignments
- * for( length of array )
- * 		if( strcmp( grades[i].assignment, assignment) == 0 )
- * 			error = NO_ERROR
- * 			*score = grades[i].score
- * 		else
- * 			++i
- *
- * return error
- *
- */
-int get_assignment( struct node *student, char *assignment, double *score ){
-	int error = ASSIGNMENT_NOT_FOUND;
-	struct assignment *grades = student->grades;
-	for( int i = 0; i < (student->num_assignments); ++i ){
-		if( strcmp( grades[i].name, assignment) == 0 ){
-			error = 0;
-			*score = grades[i].score;
-			break;
-		}
-	}
-
-	return error;
-}
 
 
 
@@ -345,7 +312,7 @@ int search_for_element( struct node *start, char *last, char *first,
 			break;
 
 		} else if( eval == 0 ) {
-			if( first != NULL ) {
+			if( (first != NULL) && (*first != '\0') ) {
 
 				// only search for first name if one was passed in
 	  			eval = strcmp( first, start->first_name );
@@ -384,9 +351,16 @@ int search_for_element( struct node *start, char *last, char *first,
  * return error
  *
  */
-int search_for_first_name( struct node *head, char *first,
-		struct node **address );
-
+struct node *getf( struct node *head, char *first ) {
+	while( head != NULL ) {
+		if( strcmp( head->first_name, first ) == 0 ) {
+			break;
+		} else {
+			head = head->next;
+		}
+	}
+	return head;
+}
 
 
 
@@ -394,9 +368,13 @@ int search_for_first_name( struct node *head, char *first,
 /*
  * Print a single element
  */
-void print_student( struct node *element ) {
-	printf("%s, %s (%lld assignments)\n", element->last_name, 
-			element->first_name, element->num_assignments );
+void print_student( struct node *student ) {
+	if( student != NULL ) { 
+		printf("%s, %s (%lld assignments)\n", student->last_name, 
+				student->first_name, student->num_assignments );
+	} else {
+		printf("Not a valid student.\n");
+	}
 }
 
 /*
@@ -499,6 +477,26 @@ double std_dev( double *array, int length, double mean ) {
 	}
 	double variance = sum / length;
 	return sqrt(variance);
+}
+
+
+
+/*
+ * get assignment grade
+ *
+ */
+int get_assignment( struct node *student, char *assignment, double *score ){
+	int error = ASSIGNMENT_NOT_FOUND;
+	struct assignment *grades = student->grades;
+	for( int i = 0; i < (student->num_assignments); ++i ){
+		if( strcmp( grades[i].name, assignment) == 0 ){
+			error = 0;
+			*score = grades[i].score;
+			break;
+		}
+	}
+
+	return error;
 }
 		
 
@@ -722,6 +720,7 @@ struct node *interpret_line( struct node **head, char *line ) {
 	struct node *new = NULL;
 	
 	strip_newline( line );
+	lowercase( line );
 	last = line;
 	first = seperate_string( last );
 	line = seperate_string( first );
@@ -896,12 +895,9 @@ void get_command( char **command, char **arguments, char *storage ) {
 	fflush( stdin );
 	fgets( storage, MAX_LINE_LENGTH, stdin );
 	
+	/* strip newline and convert to lowercase */
 	strip_newline( storage );
-
-	/* convert input to lowercase */
-	for( int i = 0; i < strlen(storage); ++i ) {
-		storage[i] = tolower(storage[i]);
-	}
+	lowercase( storage );
 
 	/* seperate the command from the arguments */
 	*command = storage;
@@ -942,6 +938,8 @@ void command_chooser( struct node **head ) {
 			tmp = getl( *head, argument );
 			print_student( tmp );
 		} else if( !strcmp( command, "getf" ) ) {
+			tmp = getf( *head, argument );
+			print_student( tmp );
 		} else if( !strcmp( command, "getn" ) ) {
 			if( getn( *head, atoi(argument), &tmp ) == 0 ) {
 				print_student( tmp );

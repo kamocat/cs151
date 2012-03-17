@@ -8,8 +8,8 @@ AllStat produces a segfault
 rm not implemented yet
 
 getl produces a segfault
-
-getf not implemented yet
+FIXED: the search now ignores the first_name if its pointer is NULL
+or if the first character is '\0'.
 
 stat produces many "errors" when run in valgrind
 
