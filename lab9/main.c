@@ -26,14 +26,17 @@ Switches A7 - A0
 
 /** Functions */
 
-unsigned char time = 0x0;
+unsigned char time = 0x00;
 ISR( TIMER_OVF_vect ) {
 	// if( time < 255 ) {
 		++time;
 	// }
 }
 
-/** The initialize() function initializes all of the Data Direction Registers for the Wunderboard. Before making changes to DDRx registers, ensure that you have read the peripherals section of the Wunderboard user guide.*/
+/** The initialize() function initializes all of the Data Direction 
+ * Registers for the Wunderboard. Before making changes to DDRx registers, 
+ * ensure that you have read the peripherals section of the Wunderboard 
+ * user guide.*/
 void initialize (void) {
 	/** Port A is the switches and buttons. They should always be inputs. ( 0 = Input and 1 = Output )*/
 	DDRA=0b00000000;
@@ -125,7 +128,7 @@ char numraster[10][3] = {
 };
 
 
-void display_number( ) {
+void display_number( void ) {
 	for( int count = 0; ;  ++count ) {
 		for( int repeat = 0; repeat < 200; ++repeat ) {
 			for( int i = 0; i < 3; ++i ) {
@@ -135,6 +138,97 @@ void display_number( ) {
 		}
 	}
 }
+
+/*
+ * Decode morse code
+ */
+void decode_morse_code( void ) {
+	unsigned char time = 0;
+	unsigned char subcounter = 0;
+	char state = 0;
+	char length = 0;
+	char morse = 0;
+
+	unsigned char dit = 20;
+	unsigned char dah = 80;
+	unsigned char pause = 100;
+
+	char red = 0;
+	char green = 0;
+
+
+	while( 1 ) {
+
+		/* Update state */
+		state <<= 1;
+		state &= 0x03;
+		state |= (PINA & 0x01 );
+		display_row( state, 0, 0 );
+
+		/* Update time */
+		++subcounter;
+		if( ( subcounter > 50 ) && ( time < 255 ) ) {
+			++time;
+			subcounter = 0;
+		}
+		display_row( 0 , time, 1 );
+
+		/* Update display */
+		red = ( 1 << time ) - 1;
+		green = morse;
+		display_row( red, green, 5 );
+
+		/* Choose an action */
+		switch( state ) {
+			case 3: // button is held
+				if( time > dit ) {
+					/* Set bit as dit, not dah */
+					morse |= 0x01;
+				} else if ( time > dah ) {
+					/* 
+					 * Add a new bit to the code.  For each bit, OFF is dit and 
+					 * ON is dah.  So, the default is dit.
+					 */
+					++length;
+					morse <<= 1;
+				}
+				break;
+
+			case 1: // button was pressed
+				/* Rising or falling edge; reset timer */
+				// time = 0;
+				display_row( 0xff, 0, 6 );
+				_delay_ms( 50 );
+				break;
+
+
+			case 2: // button is released
+				/* Rising or falling edge; reset timer */
+				// time = 0;
+				display_row( 0, 0xff, 7 );
+				_delay_ms( 50 );
+				break;
+
+			case 0: // Button remains off
+				if( ( time > pause ) && ( length != 0 ) ) {
+					/*
+					 * Character is complete.  Write to output and reset code.
+					 */
+					
+					red = ( 1 << length ) - 1;
+					green = morse;
+
+					length = 0;
+					morse = 0;
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+}
+
 
 
 
@@ -146,9 +240,8 @@ int main (void) {
 	initialize();
 	clearArray();
 	
-	while( 1 ) {
-		display_row( TCNT0, time, 2 );
-	}
+	decode_morse_code();
+
 	return 0;
 
 }//main
