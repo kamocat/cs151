@@ -26,12 +26,6 @@ Switches A7 - A0
 
 /** Functions */
 
-unsigned char time = 0x00;
-ISR( TIMER_OVF_vect ) {
-	// if( time < 255 ) {
-		++time;
-	// }
-}
 
 /** The initialize() function initializes all of the Data Direction 
  * Registers for the Wunderboard. Before making changes to DDRx registers, 
@@ -57,11 +51,6 @@ void initialize (void) {
 	DDRF=0b00000000;
 
 
-	/* Configure timer0 */
-	TCCR0A = 0;		// set timer0 to normal mode
-	TCCR0B = 0x05;	// Set timer0 prescaler to 64
-	TIMSK0 = 0x01;	// enable the overflow interrupt on timer0
-	sei(); // enable interrupts
 }
 
 void clearArray(void)
@@ -143,15 +132,16 @@ void display_number( void ) {
  * Decode morse code
  */
 void decode_morse_code( void ) {
-	unsigned char time = 0;
+	unsigned char ltime = 0;
 	unsigned char subcounter = 0;
 	char state = 0;
 	char length = 0;
 	char morse = 0;
+	char beep = 0; // This holds if the beep was a dit, a dah, or neither 
 
-	unsigned char dit = 20;
-	unsigned char dah = 80;
-	unsigned char pause = 100;
+	unsigned char dit = 8;
+	unsigned char dah = 24;
+	unsigned char pause = 64;
 
 	char red = 0;
 	char green = 0;
@@ -167,50 +157,52 @@ void decode_morse_code( void ) {
 
 		/* Update time */
 		++subcounter;
-		if( ( subcounter > 50 ) && ( time < 255 ) ) {
-			++time;
+		if( ( subcounter > 15 ) && ( ltime < 255 ) ) {
+			++ltime;
 			subcounter = 0;
 		}
-		display_row( 0 , time, 1 );
+		display_row( 0 , ltime, 1 );
 
 		/* Update display */
-		red = ( 1 << time ) - 1;
-		green = morse;
+		red = ( 1 << length ) - 1;
+		green = morse; 
 		display_row( red, green, 5 );
 
 		/* Choose an action */
 		switch( state ) {
-			case 3: // button is held
-				if( time > dit ) {
-					/* Set bit as dit, not dah */
-					morse |= 0x01;
-				} else if ( time > dah ) {
-					/* 
-					 * Add a new bit to the code.  For each bit, OFF is dit and 
-					 * ON is dah.  So, the default is dit.
-					 */
-					++length;
-					morse <<= 1;
-				}
-				break;
-
 			case 1: // button was pressed
 				/* Rising or falling edge; reset timer */
-				// time = 0;
-				display_row( 0xff, 0, 6 );
-				_delay_ms( 50 );
+				ltime = 0;
+				break;
+
+			case 3: // button is held
+				if( ltime > dah ) {
+					beep |= 0x02;
+					display_row( 0x3e, 0x3e, 4 );
+				} else if ( ltime > dit ) {
+					beep |= 0x01;
+					display_row( 0x0e, 0, 4 );
+				}
 				break;
 
 
 			case 2: // button is released
-				/* Rising or falling edge; reset timer */
-				// time = 0;
-				display_row( 0, 0xff, 7 );
-				_delay_ms( 50 );
+				ltime = 0;
+
+				if( beep > 0 ) {
+					++length;
+					morse <<= 1;
+					
+					/* if it was a dah, we need to set the code bit true */
+					morse += ( beep > 1) ? 1 : 0;
+					beep = 0;
+				}
+
 				break;
 
 			case 0: // Button remains off
-				if( ( time > pause ) && ( length != 0 ) ) {
+
+				if( ( ltime > pause ) /* && ( length != 0 ) */ ) {
 					/*
 					 * Character is complete.  Write to output and reset code.
 					 */
@@ -220,6 +212,7 @@ void decode_morse_code( void ) {
 
 					length = 0;
 					morse = 0;
+					display_row( 0x18, 0x30, 4);
 				}
 				break;
 

@@ -1,9 +1,31 @@
-*/*
+# This is the .gitignore file for my cs151 repository
+# Lines starting with # are comments
+
+# These are the files created by the compilation process that we want to ignore
+*.eep
+*.elf
+*.hex
+*.lss
+*.sym
+*.map
+obj/
+*.tar
+*.bz2
+*/test
+*/main
+*/.dep
+
+# These are miscellanious files that we create in editing or debugging, that we
+# don't want included either
+*.swp
+*error
+*.log
+
+# These are our source files, which we do not want to ignore
 !*.h
 !*.c
 !README
 !*.txt
-.*
 !.gitignore
 !Makefile
 !makefile
