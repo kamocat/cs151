@@ -98,35 +98,7 @@ void display_row( char red, char green, char column ) {
 }
 
 
-/*
- * This is a list of numbers, each displayable on a 3x5 raster grid.
- * The first index is the number, from 0 to 9.
- * The second index is the column of the number, from 0 to 2.
- */
-char numraster[10][3] = {
-	{0x1F, 0x11, 0x1F},
-	{0x01, 0x1F, 0x09},
-	{0x0D, 0x13, 0x09},
-	{0x0E, 0x15, 0x15},
-	{0x1F, 0x04, 0x1C},
-	{0x17, 0x15, 0x18},
-	{0x02, 0x15, 0x0E},
-	{0x1C, 0x13, 0x10},
-	{0x1F, 0x15, 0x1F},
-	{0x1F, 0x14, 0x0C}
-};
 
-
-void display_number( void ) {
-	for( int count = 0; ;  ++count ) {
-		for( int repeat = 0; repeat < 200; ++repeat ) {
-			for( int i = 0; i < 3; ++i ) {
-				display_row( numraster[count%10][2-i] << 3,
-						numraster[ (count + 1)%10][2-i], i );
-			}
-		}
-	}
-}
 
 /*
  * Decode morse code
@@ -140,8 +112,8 @@ void decode_morse_code( void ) {
 	char beep = 0; // This holds if the beep was a dit, a dah, or neither 
 
 	unsigned char dit = 4;
-	unsigned char dah = 24;
-	unsigned char pause = 64;
+	unsigned char dah = 20;
+	unsigned char pause = 48;
 
 	char red = 0;
 	char green = 0;
@@ -153,20 +125,21 @@ void decode_morse_code( void ) {
 		state <<= 1;
 		state &= 0x03;
 		state |= (PINA & 0x01 );
-		display_row( state, 0, 0 );
+		// display_row( state, 0, 0 );
 
 		/* Update time */
 		++subcounter;
-		if( ( subcounter > 5 ) && ( ltime < 255 ) ) {
+		if( ( subcounter > 10 ) && ( ltime < 255 ) ) {
 			++ltime;
 			subcounter = 0;
 		}
-		display_row( 0 , ltime, 1 );
+		// display_row( 0 , ltime, 1 );
 
-		/* Update display 
-		red = ( 1 << length ) - 1;
-		green = morse; */
-		display_row( red, green, 5 );
+		/* Update display */
+		/* red = ( 1 << length ) - 1;
+		 * green = morse;
+		 */
+		display_row( red, green, 7 );
 
 		/* Choose an action */
 		switch( state ) {
@@ -178,10 +151,10 @@ void decode_morse_code( void ) {
 			case 3: // button is held
 				if( ltime > dah ) {
 					beep |= 0x02;
-					display_row( 0x3e, 0x3e, 4 );
+					display_row( 0x3e, 0x3e, 6 );
 				} else if ( ltime > dit ) {
 					beep |= 0x01;
-					display_row( 0x0e, 0, 4 );
+					display_row( 0x0e, 0, 6 );
 				}
 				break;
 
@@ -212,7 +185,7 @@ void decode_morse_code( void ) {
 
 					length = 0;
 					morse = 0;
-					display_row( 0x18, 0x30, 4);
+					display_row( 0x00, 0xff, 6);
 				}
 				break;
 
