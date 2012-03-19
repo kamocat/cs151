@@ -139,7 +139,7 @@ void decode_morse_code( void ) {
 	char morse = 0;
 	char beep = 0; // This holds if the beep was a dit, a dah, or neither 
 
-	unsigned char dit = 8;
+	unsigned char dit = 4;
 	unsigned char dah = 24;
 	unsigned char pause = 64;
 
@@ -157,15 +157,15 @@ void decode_morse_code( void ) {
 
 		/* Update time */
 		++subcounter;
-		if( ( subcounter > 15 ) && ( ltime < 255 ) ) {
+		if( ( subcounter > 5 ) && ( ltime < 255 ) ) {
 			++ltime;
 			subcounter = 0;
 		}
 		display_row( 0 , ltime, 1 );
 
-		/* Update display */
+		/* Update display 
 		red = ( 1 << length ) - 1;
-		green = morse; 
+		green = morse; */
 		display_row( red, green, 5 );
 
 		/* Choose an action */
@@ -202,7 +202,7 @@ void decode_morse_code( void ) {
 
 			case 0: // Button remains off
 
-				if( ( ltime > pause ) /* && ( length != 0 ) */ ) {
+				if( ( ltime > pause ) && ( length != 0 ) ) {
 					/*
 					 * Character is complete.  Write to output and reset code.
 					 */

@@ -2,6 +2,9 @@ A bugs file for lab9
 
 Does not display code sequence on screen.
 (I can display it live, but it is cleared when the pause has elapsed)
+FIXED: Had disabled one of the catches to make it only display once.
+Also had to disable the live display.  I might re-enable the live display once I
+have it displaying characters.
 
 Dit and Dah display the same color
 FIXED: was not resetting beep, so once a dah was entered, every subsequent
