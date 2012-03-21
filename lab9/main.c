@@ -35,6 +35,7 @@ void decode_morse_code( void ) {
 
 	char red = 0;
 	char green = 0;
+	char character = '\0';
 
 
 	while( 1 ) {
@@ -47,7 +48,7 @@ void decode_morse_code( void ) {
 
 		/* Update time */
 		++subcounter;
-		if( ( subcounter > 10 ) && ( ltime < 255 ) ) {
+		if( ( subcounter > 3 ) && ( ltime < 255 ) ) {
 			++ltime;
 			subcounter = 0;
 		}
@@ -58,6 +59,7 @@ void decode_morse_code( void ) {
 		 * green = morse;
 		 */
 		display_row( red, green, 7 );
+		print_ascii( character, 0 );
 
 		/* Choose an action */
 		switch( state ) {
@@ -100,6 +102,7 @@ void decode_morse_code( void ) {
 					
 					red = ( 1 << length ) - 1;
 					green = morse;
+					character = translate_morse( morse, length );
 
 					length = 0;
 					morse = 0;

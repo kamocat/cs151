@@ -9,6 +9,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "char_lookup.h"
 
 #ifndef HORNM_MORSE_CODE
 #define HORNM_MORSE_CODE
@@ -102,7 +103,7 @@ void print_ascii( char character, signed char column ) {
 		character -= 'A';
 		for( int i = 0; i < 3; ++i ) {
 			if( ( column >= 0 ) && ( column <= 7 ) ) {
-				display_row( 0, raster[character][i], column );
+				display_row( 0, raster[(int)character][i], column );
 			}
 			++column;
 		}
@@ -121,20 +122,20 @@ void print_ascii( char character, signed char column ) {
  */
 char translate_morse( char code, char length ) {
 	char character;
-	code &= ( 1 << ( length + 1 ) ) - 1; //mask with length 'length'
+	code &= ( 1 << length ) - 1; //mask with length 'length'
 
-	switch length{
+	switch( length ){
 		case 1:
-			character = lookup_1bit[code];
+			character = lookup_1bit[(int)code];
 			break;
 		case 2:
-			character = lookup_2bit[code];
+			character = lookup_2bit[(int)code];
 			break;
 		case 3:
-			character = lookup_3bit[code];
+			character = lookup_3bit[(int)code];
 			break;
 		case 4:
-			character = lookup_4bit[code];
+			character = lookup_4bit[(int)code];
 			break;
 		default:
 			character = '\0';	// non-printable character
